@@ -14,6 +14,7 @@ const theme = getTheme();
 export const App: FC = () => {
     const state = useLazyRef(() => {
         const state = new State();
+        state.setLTS("des(0,0,0)");
         return state;
     }).current;
 

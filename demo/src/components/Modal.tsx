@@ -65,7 +65,7 @@ const contentStyles = mergeStyleSets({
     body: {
         flex: "4 4 auto",
         padding: "0 24px 24px 24px",
-        overflowY: "hidden",
+        overflow: "hidden",
         selectors: {
             p: {margin: "14px 0"},
             "p:first-child": {marginTop: 0},

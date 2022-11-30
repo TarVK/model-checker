@@ -93,7 +93,13 @@ export const FormulaModal: FC<{
                     />
                 </StackItem>
             </Stack>
-            <div style={{width: 500, height: 400, marginTop: theme.spacing.m}}>
+            <div
+                style={{
+                    width: 500,
+                    height: 400,
+                    marginTop: theme.spacing.m,
+                    overflowX: "visible",
+                }}>
                 {editor}
             </div>
         </StandardModal>

@@ -51,7 +51,7 @@ export const LTSGraph: FC<{state: State}> = ({state}) => {
             const tool = editorState.getSelectedTool();
             if (tool == "select") {
                 const s = getNode(point);
-                if (s) {
+                if (s != null) {
                     editorState.setSelection({type: "node", node: s});
                     dragging.current = true;
                 }

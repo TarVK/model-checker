@@ -37,3 +37,29 @@ export function equals<T>(a: Set<T>, b: Set<T>): boolean {
 export function isSubset<T>(a: Set<T>, b: Set<T>): boolean {
     return [...a].every(v => b.has(v));
 }
+
+/**
+ * Removes the given item from the set
+ * @param set The set from which to remove an item
+ * @param item The item to be removed
+ * @returns A copy of the input set, but with the item removed
+ */
+export function remove<T>(set: Set<T>, item: T): Set<T> {
+    if (!set.has(item)) return set;
+    const out = new Set(set);
+    out.delete(item);
+    return out;
+}
+
+/**
+ * Adds the given item from the set
+ * @param set The set to which to add an item
+ * @param item The item to be added
+ * @returns A copy of the input set, but with the item added
+ */
+export function add<T>(set: Set<T>, item: T): Set<T> {
+    if (set.has(item)) return set;
+    const out = new Set(set);
+    out.add(item);
+    return out;
+}

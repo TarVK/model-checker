@@ -8,6 +8,7 @@ import {
 } from "model-checker";
 import {formatSyntaxError} from "../util/formatyntaxError";
 import {ISyntaxError} from "../_types/ISyntaxError";
+import {IExtendedFormulaAST, getReducedAST} from "model-checker";
 
 /**
  * A class to store formula states
@@ -21,6 +22,11 @@ export class Formula {
     protected ast = new DataCacher(hook => {
         const val = this.parsed.get(hook);
         if (val.status) return val.value;
+        return null;
+    });
+    protected simplifiedAst = new DataCacher(hook => {
+        const val = this.ast.get(hook);
+        if (val) return getReducedAST(val);
         return null;
     });
     protected errors = new DataCacher(hook => {
@@ -89,12 +95,34 @@ export class Formula {
     }
 
     /**
-     * Retrieves the AST that represents the formula
+     * Retrieves the AST that represents the formula, potentially including negations
      * @param hook The hook to subscribe to changes
      * @returns The AST representing the formula, or null if the text is invalid
      */
-    public getFormula(hook?: IDataHook): IFormulaAST | null {
+    public getFormula(hook?: IDataHook): IExtendedFormulaAST | null {
         return this.ast.get(hook);
+    }
+
+    /**
+     * Retrieves the AST that represents the formula, without negations
+     * @param hook The hook to subscribe to changes
+     * @returns The AST representing the formula, or null if the text is invalid
+     */
+    public getSimplifiedFormula(hook?: IDataHook): IFormulaAST | null {
+        const ast = this.simplifiedAst.get(hook);
+        if (!(ast instanceof Set)) return ast;
+        return null;
+    }
+
+    /**
+     * Gets the set of all variables that have an odd negation couunt
+     * @param hook The hook to subscribe to changes
+     * @returns The set of all variables with an odd negation count
+     */
+    public getOddNegations(hook?: IDataHook): Set<string> {
+        const errors = this.simplifiedAst.get(hook);
+        if (errors instanceof Set) return errors;
+        return empty;
     }
 
     /**
@@ -111,10 +139,11 @@ export class Formula {
      * @returns The result of the verification
      */
     public verify(): IVerifyResult | undefined {
-        const formula = this.getFormula();
+        const formula = this.getSimplifiedFormula();
         const lts = this.LTS();
         if (formula && lts) {
             const start = Date.now();
+
             const result = naiveVerify(lts, formula);
             this.result.set(result);
             this.computationTime.set(Date.now() - start);
@@ -140,3 +169,5 @@ export class Formula {
         return this.result.get(hook);
     }
 }
+
+const empty = new Set<string>();

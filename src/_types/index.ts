@@ -2,6 +2,7 @@ export * from "./IFormulaAST";
 export * from "./ILTSAST";
 export * from "./ILTS";
 export * from "./IVerifyResult";
+export * from "./IExtendedFormulaAST";
 
 export type {
     Failure,

@@ -1,14 +1,15 @@
 import p, {Parser} from "parsimmon";
-import {IFormulaAST} from "../_types";
+import {IExtendedFormulaAST} from "../_types/IExtendedFormulaAST";
 import {wrap} from "./util";
 
 const actionParser = p.regex(/[a-z][a-z0-9_\-]*/);
 const variableTextParser = wrap(p.regex(/[a-zA-Z]+/));
 
-export const formulaParser: Parser<IFormulaAST> = p.lazy(() =>
+export const formulaParser: Parser<IExtendedFormulaAST> = p.lazy(() =>
     p.alt(
         trueParser,
         falseParser,
+        negationParser,
         conjunctionParser,
         disjunctionParser,
         existsParser,
@@ -21,6 +22,11 @@ export const formulaParser: Parser<IFormulaAST> = p.lazy(() =>
 
 export const trueParser = wrap(p.string("true").map(() => ({type: "true"} as const)));
 export const falseParser = wrap(p.string("false").map(() => ({type: "false"} as const)));
+export const negationParser = wrap(
+    p
+        .seq(p.string("!"), formulaParser)
+        .map(([, formula]) => ({type: "negate", formula} as const))
+);
 export const variableParser = variableTextParser.map(
     name => ({type: "variable", name} as const)
 );

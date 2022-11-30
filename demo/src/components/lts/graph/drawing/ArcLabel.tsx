@@ -33,7 +33,7 @@ export const ArcLabel: FC<{
             x={center.x}
             y={-center.y}
             fontSize={fontSize}
-            text-anchor="middle"
+            textAnchor="middle"
             dy=".3em"
             style={{
                 paintOrder: "stroke",

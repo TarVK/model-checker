@@ -119,7 +119,7 @@ export class State {
         const p = this.parsed.get();
         if (p.status) {
             const states = this.getStates();
-            const newState = states.reduce((highest, s) => Math.max(highest, s), 0) + 1;
+            const newState = states.reduce((highest, s) => Math.max(highest, s), -1) + 1;
             this.setStatePos(newState, pos);
             const val: ILSTAST = {...p.value, stateCount: states.length + 1};
             this.setLTS(stringifyLTS(val));
