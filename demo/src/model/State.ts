@@ -26,6 +26,7 @@ export class State {
     });
 
     protected formulas = new Field<Formula[]>([]);
+    protected shownFormula = new Field<null | Formula>(null);
 
     // LTS text handling
     /**
@@ -224,5 +225,23 @@ export class State {
     public removeFormula(formula: Formula): void {
         this.formulas.set(this.formulas.get().filter(f => f != formula));
         formula.dispose();
+        if (this.shownFormula.get() == formula) this.setShownFormula(null);
+    }
+
+    /**
+     * Sets the formula to be shown
+     * @param formula The formula to be shown
+     */
+    public setShownFormula(formula: Formula | null): void {
+        this.shownFormula.set(formula);
+    }
+
+    /**
+     * Retrieves the formula to be shown
+     * @param hook The hook to subscribe to changes
+     * @returns The formula to be shown
+     */
+    public getShownFormula(hook?: IDataHook): Formula | null {
+        return this.shownFormula.get(hook);
     }
 }

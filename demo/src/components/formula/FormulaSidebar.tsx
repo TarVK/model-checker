@@ -25,6 +25,15 @@ export const FormulaSidebar: FC<{state: State}> = ({state}) => {
         [state]
     );
 
+    const onSelect = useCallback(
+        (formula: Formula) => {
+            if (state.getShownFormula() == formula) state.setShownFormula(null);
+            else state.setShownFormula(formula);
+        },
+        [state]
+    );
+    const selectedFormula = state.getShownFormula(h);
+
     const [justCreated, setJustCreated] = useState<Formula | null>(null);
     const create = useCallback(() => {
         setJustCreated(state.addFormula());
@@ -84,7 +93,9 @@ export const FormulaSidebar: FC<{state: State}> = ({state}) => {
                         key={formulas.length - i}
                         formula={formula}
                         edit={justCreated == formula}
+                        selected={selectedFormula == formula}
                         onDelete={onDelete}
+                        onSelect={onSelect}
                     />
                 ))}
             </StackItem>
