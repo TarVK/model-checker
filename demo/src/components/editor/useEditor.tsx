@@ -2,7 +2,6 @@ import {makeStyles} from "@fluentui/react-theme-provider";
 import {loader, useMonaco} from "@monaco-editor/react";
 import {languages, editor} from "monaco-editor/esm/vs/editor/editor.api";
 import React, {FC, useRef, useEffect, useState, useCallback} from "react";
-import {SATLanguage, SATTheme} from "./SATLanguageMonacoDefinition";
 
 const useStyle = makeStyles({
     editorStyle: {
@@ -44,13 +43,11 @@ export const useEditor = ({
         if (!monaco) return;
 
         if (elementRef.current) {
-            const modelUri = monaco.Uri.parse(`a://b/smth${id++}.json`); // a made up unique URI for our model
-            const model = monaco.editor.createModel(value, "json", modelUri);
+            const modelUri = monaco.Uri.parse(`a://b/smth${id++}.smth`); // a made up unique URI for our model
+            const model = monaco.editor.createModel(value, options.language, modelUri);
             model.setEOL(monaco.editor.EndOfLineSequence.LF);
             const e = (editorRef.current = monaco.editor.create(elementRef.current, {
                 value: value,
-                language: "json",
-                theme: SATTheme,
                 folding: true,
                 foldingStrategy: "auto",
                 // showFoldingControls: "always",

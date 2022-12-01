@@ -8,6 +8,7 @@ import {useErrorHighlighter} from "../../editor/useErrorHighlighter";
 import {useLazyRef} from "../../../util/useLazyRef";
 import {LTSGraphState} from "../graph/LTSGraphState";
 import {LTSGraph} from "../graph/LTSGraph";
+import {customTheme, DESLanguage} from "../../editor/CustomLanguageMonacoDefinition";
 
 const theme = getTheme();
 export const LTSCodeEditor: FC<{state: LTSGraphState}> = ({state}) => {
@@ -20,6 +21,8 @@ export const LTSCodeEditor: FC<{state: LTSGraphState}> = ({state}) => {
             minimap: {enabled: false},
             scrollbar: {useShadows: false},
             scrollBeyondLastLine: false,
+            language: DESLanguage,
+            theme: customTheme,
         },
     });
 

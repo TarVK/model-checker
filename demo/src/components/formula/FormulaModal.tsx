@@ -15,6 +15,7 @@ import {StandardModal} from "../Modal";
 import {useEditor} from "../editor/useEditor";
 import {useAnnotationRemover} from "../editor/useAnnotationsRemover";
 import {useErrorHighlighter} from "../editor/useErrorHighlighter";
+import {customTheme, formulaLanguage} from "../editor/CustomLanguageMonacoDefinition";
 
 const theme = getTheme();
 export const FormulaModal: FC<{
@@ -27,6 +28,8 @@ export const FormulaModal: FC<{
         value: formula.getFormulaText(),
         height: "100%",
         options: {
+            language: formulaLanguage,
+            theme: customTheme,
             minimap: {enabled: false},
             scrollbar: {useShadows: false},
             lineNumbers: "off",

@@ -168,6 +168,7 @@ export const LTSGraph: FC<{state: State}> = ({state}) => {
                     autoFocus
                     onKeyDown={evt => {
                         if (evt.key == "Enter") updateArc();
+                        evt.stopPropagation();
                     }}
                     label="Action"
                 />

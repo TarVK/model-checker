@@ -22,6 +22,14 @@ export const GraphEditorToolbar: FC<{
         [state]
     );
 
+    const onDelete = useCallback(() => {
+        const {LTSState} = state;
+        const selected = state.getSelection();
+        if (selected?.type == "node") LTSState.removeState(selected.node);
+        else if (selected?.type == "arc")
+            LTSState.removeTransition(selected.from, selected.to, selected.action);
+    }, [state]);
+
     const cfg = state.getConfig(h);
     return (
         <div
@@ -59,7 +67,7 @@ export const GraphEditorToolbar: FC<{
                 icon="Delete"
                 hover="Delete the selected node or arc (D)"
                 title="Delete item"
-                onClick={() => console.log("TODO")}
+                onClick={onDelete}
             />
             <SidebarButton
                 icon="GitGraph"
