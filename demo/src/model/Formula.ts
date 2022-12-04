@@ -5,10 +5,12 @@ import {
     ILTS,
     IVerifyResult,
     naiveVerify,
+    emersonLeiVerify,
 } from "model-checker";
 import {formatSyntaxError} from "../util/formatyntaxError";
 import {ISyntaxError} from "../_types/ISyntaxError";
 import {IExtendedFormulaAST, getReducedAST} from "model-checker";
+import {IVerifyAlgoritm} from "../_types/IVerifyAlgoritm";
 
 /**
  * A class to store formula states
@@ -17,6 +19,8 @@ export class Formula {
     protected name = new Field("");
     protected text = new Field("");
     protected computationTime = new Field(0);
+
+    protected algoritm = new Field<IVerifyAlgoritm>("naive");
 
     protected parsed = new DataCacher(hook => formulaParser.parse(this.text.get(hook)));
     protected ast = new DataCacher(hook => {
@@ -74,6 +78,24 @@ export class Formula {
      */
     public getName(hook?: IDataHook): string {
         return this.name.get(hook);
+    }
+
+    /**
+     * Retrieves the algorithm that's used for verification
+     * @param hook The hook to subscribe to changes
+     * @returns The used algrotim type
+     */
+    public getAlgoritm(hook?: IDataHook): IVerifyAlgoritm {
+        return this.algoritm.get(hook);
+    }
+
+    /**
+     * Sets the algorithm to be used for verification
+     * @param algorithm The algoritm to be used
+     */
+    public setAlgoritm(algorithm: IVerifyAlgoritm): void {
+        this.algoritm.set(algorithm);
+        this.result.set(null);
     }
 
     /**
@@ -144,7 +166,10 @@ export class Formula {
         if (formula && lts) {
             const start = Date.now();
 
-            const result = naiveVerify(lts, formula);
+            const result =
+                this.algoritm.get() == "EmersonLei"
+                    ? emersonLeiVerify(lts, formula)
+                    : naiveVerify(lts, formula);
             this.result.set(result);
             this.computationTime.set(Date.now() - start);
             return result;

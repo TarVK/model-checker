@@ -69,7 +69,6 @@ export function naiveVerify(lts: ILTS, formula: IFormulaAST): IVerifyResult {
 
     const states = evalF(formula);
 
-    console.log(formula, states, lts, lts.init);
     return {
         satisfyingStates: states,
         verified: states.has(lts.init),

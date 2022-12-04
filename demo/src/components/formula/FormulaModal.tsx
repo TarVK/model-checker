@@ -16,6 +16,7 @@ import {useEditor} from "../editor/useEditor";
 import {useAnnotationRemover} from "../editor/useAnnotationsRemover";
 import {useErrorHighlighter} from "../editor/useErrorHighlighter";
 import {customTheme, formulaLanguage} from "../editor/CustomLanguageMonacoDefinition";
+import {IVerifyAlgoritm} from "../../_types/IVerifyAlgoritm";
 
 const theme = getTheme();
 export const FormulaModal: FC<{
@@ -61,6 +62,7 @@ export const FormulaModal: FC<{
         if (editor && editor.getValue() != formulaText) editor.setValue(formulaText);
     }, [formulaText]);
 
+    const algorithm = formula.getAlgoritm(h);
     return (
         <StandardModal title="Edit formula" visible={visible} onClose={onClose}>
             <Stack horizontal gap={theme.spacing.m}>
@@ -79,19 +81,19 @@ export const FormulaModal: FC<{
                         options={[
                             {
                                 key: "0",
-                                data: 0,
+                                data: "naive" as IVerifyAlgoritm,
                                 text: "Naive",
-                                selected: false, //solverId == 0,
+                                selected: algorithm == "naive",
                             },
                             {
                                 key: "1",
-                                data: 1,
-                                text: "Smart",
-                                selected: false, // solverId == 1,
+                                data: "EmersonLei" as IVerifyAlgoritm,
+                                text: "EmersonLei",
+                                selected: algorithm == "EmersonLei",
                             },
                         ]}
                         onChange={(e, option) => {
-                            // option && setSolverId(option.data)
+                            option && formula.setAlgoritm(option.data);
                         }}
                     />
                 </StackItem>
