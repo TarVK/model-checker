@@ -34,7 +34,9 @@ export const StandardModal: FC<{
                         onClick={onClose}
                     />
                 </div>
-                <div className={contentStyles.body}>{children}</div>
+                <div className={contentStyles.body} onKeyDown={e => e.stopPropagation()}>
+                    {children}
+                </div>
             </Modal>
         </>
     );

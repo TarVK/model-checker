@@ -5,3 +5,4 @@ export * from "./getAlternationDepth";
 export * from "./getDepth";
 export * from "./getFreeVariables";
 export * from "./getReducedAST";
+export * from "./getFormulaText";

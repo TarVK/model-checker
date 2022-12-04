@@ -6,6 +6,9 @@ import {
     IVerifyResult,
     naiveVerify,
     emersonLeiVerify,
+    getAlternationDepth,
+    getDepth,
+    getFreeVariables,
 } from "model-checker";
 import {formatSyntaxError} from "../util/formatyntaxError";
 import {ISyntaxError} from "../_types/ISyntaxError";
@@ -36,6 +39,22 @@ export class Formula {
     protected errors = new DataCacher(hook => {
         const val = this.parsed.get(hook);
         if (!val.status) return formatSyntaxError(val);
+        return null;
+    });
+
+    protected depth = new DataCacher(hook => {
+        const val = this.simplifiedAst.get(hook);
+        if (val && !(val instanceof Set)) return getDepth(val);
+        return null;
+    });
+    protected alternationDepth = new DataCacher(hook => {
+        const val = this.simplifiedAst.get(hook);
+        if (val && !(val instanceof Set)) return getAlternationDepth(val);
+        return null;
+    });
+    protected freeVariables = new DataCacher(hook => {
+        const val = this.simplifiedAst.get(hook);
+        if (val && !(val instanceof Set)) return getFreeVariables(val);
         return null;
     });
 
@@ -137,7 +156,7 @@ export class Formula {
     }
 
     /**
-     * Gets the set of all variables that have an odd negation couunt
+     * Retrieves the set of all variables that have an odd negation couunt
      * @param hook The hook to subscribe to changes
      * @returns The set of all variables with an odd negation count
      */
@@ -145,6 +164,42 @@ export class Formula {
         const errors = this.simplifiedAst.get(hook);
         if (errors instanceof Set) return errors;
         return empty;
+    }
+
+    /**
+     * Retrieves the set of free variables in this formule
+     * @param hook The hook to subscribe to changes
+     * @returns The current free variables
+     */
+    public getFreeVariables(hook?: IDataHook): Set<string> | null {
+        return this.freeVariables.get(hook);
+    }
+
+    /**
+     * Retrieves whether this formula is currently valid
+     * @param hook The hook to subscribe to changes
+     * @returns Whether the formula is currently valid
+     */
+    public isValid(hook?: IDataHook): boolean {
+        return this.freeVariables.get(hook)?.size == 0;
+    }
+
+    /**
+     * Retrieves the depth
+     * @param hook The hook to subscribe to changes
+     * @returns The fixpoint depth
+     */
+    public getDepth(hook?: IDataHook): number | null {
+        return this.depth.get(hook);
+    }
+
+    /**
+     * Retrieves the alternation depth
+     * @param hook The hook to subscribe to changes
+     * @returns The alternation fixpoint depth
+     */
+    public getAlternationDepth(hook?: IDataHook): number | null {
+        return this.alternationDepth.get(hook);
     }
 
     /**

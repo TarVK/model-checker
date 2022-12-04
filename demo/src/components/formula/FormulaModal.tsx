@@ -1,22 +1,27 @@
-import React, {FC, useEffect, useState} from "react";
+import React, {FC, useEffect, useMemo, useState} from "react";
 import {Formula} from "../../model/Formula";
 import {
     DefaultButton,
     getTheme,
     Modal,
     Pivot,
+    PivotItem,
     TextField,
     Dropdown,
     Stack,
     StackItem,
+    MessageBar,
+    MessageBarType,
 } from "office-ui-fabric-react";
-import {useDataHook} from "model-react";
+import {useDataHook, useMemoDataHook} from "model-react";
 import {StandardModal} from "../Modal";
 import {useEditor} from "../editor/useEditor";
 import {useAnnotationRemover} from "../editor/useAnnotationsRemover";
 import {useErrorHighlighter} from "../editor/useErrorHighlighter";
 import {customTheme, formulaLanguage} from "../editor/CustomLanguageMonacoDefinition";
 import {IVerifyAlgoritm} from "../../_types/IVerifyAlgoritm";
+import {FormulaStats} from "./FormulaStats";
+import {useSettledData} from "../../util/useSettledValue";
 
 const theme = getTheme();
 export const FormulaModal: FC<{
@@ -63,6 +68,31 @@ export const FormulaModal: FC<{
     }, [formulaText]);
 
     const algorithm = formula.getAlgoritm(h);
+    const syntaxError = useSettledData(formula.getFormulaErrors(h));
+    const freeVariablesErrorText = useSettledData(
+        useMemoDataHook(h => {
+            const freeVariables = formula.getFreeVariables(h);
+            if (freeVariables == null || freeVariables.size == 0) return null;
+            return `All variables must be bound by a fixpoint, found free variables ${[
+                ...freeVariables,
+            ]
+                .map(variable => `"${variable}"`)
+                .join(",")}`;
+        }, [])[0]
+    );
+
+    const alternationErrorsText = useSettledData(
+        useMemoDataHook(h => {
+            const alternationErrors = formula.getOddNegations(h);
+            if (alternationErrors.size == 0) return null;
+            return `Must have a even number of negations between a variable reference and its fixpoint binder, found an odd number for ${[
+                ...alternationErrors,
+            ]
+                .map(variable => `"${variable}"`)
+                .join(",")}`;
+        }, [])[0]
+    );
+
     return (
         <StandardModal title="Edit formula" visible={visible} onClose={onClose}>
             <Stack horizontal gap={theme.spacing.m}>
@@ -98,15 +128,46 @@ export const FormulaModal: FC<{
                     />
                 </StackItem>
             </Stack>
-            <div
-                style={{
-                    width: 500,
-                    height: 400,
-                    marginTop: theme.spacing.m,
-                    overflowX: "visible",
-                }}>
-                {editor}
-            </div>
+            <Pivot aria-label="Formula tabs" style={{marginTop: theme.spacing.l1}}>
+                <PivotItem headerText="Formula">
+                    <div
+                        style={{
+                            width: 500,
+                            height: 400,
+                            marginTop: theme.spacing.m,
+                            overflowX: "visible",
+                        }}>
+                        {editor}
+                    </div>
+                </PivotItem>
+                <PivotItem headerText="Stats">
+                    <FormulaStats formula={formula} />
+                </PivotItem>
+            </Pivot>
+            {alternationErrorsText && (
+                <MessageBar
+                    styles={{root: {width: 500, boxSizing: "border-box"}}}
+                    dismissButtonAriaLabel="Close"
+                    messageBarType={MessageBarType.error}>
+                    {alternationErrorsText}
+                </MessageBar>
+            )}
+            {freeVariablesErrorText && (
+                <MessageBar
+                    styles={{root: {width: 500, boxSizing: "border-box"}}}
+                    dismissButtonAriaLabel="Close"
+                    messageBarType={MessageBarType.error}>
+                    {freeVariablesErrorText}
+                </MessageBar>
+            )}
+            {syntaxError && (
+                <MessageBar
+                    styles={{root: {width: 500, boxSizing: "border-box"}}}
+                    dismissButtonAriaLabel="Close"
+                    messageBarType={MessageBarType.error}>
+                    {syntaxError.message}
+                </MessageBar>
+            )}
         </StandardModal>
     );
 };

@@ -15,12 +15,12 @@ export const getAlternationDepthData = createReducer<{
     disjunction: ({left, right}) => ({
         depth: Math.max(left.depth, right.depth),
         LFPDepth: Math.max(left.LFPDepth, right.LFPDepth),
-        GFPDepth: Math.max(left.LFPDepth, right.LFPDepth),
+        GFPDepth: Math.max(left.GFPDepth, right.GFPDepth),
     }),
     conjunction: ({left, right}) => ({
         depth: Math.max(left.depth, right.depth),
         LFPDepth: Math.max(left.LFPDepth, right.LFPDepth),
-        GFPDepth: Math.max(left.LFPDepth, right.LFPDepth),
+        GFPDepth: Math.max(left.GFPDepth, right.GFPDepth),
     }),
     leastFixpoint: ({formula}) => {
         const newDepth = Math.max(1, formula.depth, 1 + formula.GFPDepth);

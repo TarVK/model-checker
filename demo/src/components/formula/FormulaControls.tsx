@@ -65,7 +65,7 @@ export const FormulaControls: FC<{
                             selected={selected}
                             onClick={() => onSelect(formula)}
                         />
-                    ) : formula.getFormula(h) != null ? (
+                    ) : formula.isValid(h) ? (
                         <SidebarButton
                             icon="Play"
                             hover="Check formula on LTS"
