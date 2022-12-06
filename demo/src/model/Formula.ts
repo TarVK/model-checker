@@ -9,6 +9,7 @@ import {
     getAlternationDepth,
     getDepth,
     getFreeVariables,
+    getDependentAlternationDepth,
 } from "model-checker";
 import {formatSyntaxError} from "../util/formatyntaxError";
 import {ISyntaxError} from "../_types/ISyntaxError";
@@ -50,6 +51,11 @@ export class Formula {
     protected alternationDepth = new DataCacher(hook => {
         const val = this.simplifiedAst.get(hook);
         if (val && !(val instanceof Set)) return getAlternationDepth(val);
+        return null;
+    });
+    protected dependentAlternationDepth = new DataCacher(hook => {
+        const val = this.simplifiedAst.get(hook);
+        if (val && !(val instanceof Set)) return getDependentAlternationDepth(val);
         return null;
     });
     protected freeVariables = new DataCacher(hook => {
@@ -200,6 +206,15 @@ export class Formula {
      */
     public getAlternationDepth(hook?: IDataHook): number | null {
         return this.alternationDepth.get(hook);
+    }
+
+    /**
+     * Retrieves the dependent alternation depth
+     * @param hook The hook to subscribe to changes
+     * @returns The alternation fixpoint depth
+     */
+    public getDependentAlternationDepth(hook?: IDataHook): number | null {
+        return this.dependentAlternationDepth.get(hook);
     }
 
     /**

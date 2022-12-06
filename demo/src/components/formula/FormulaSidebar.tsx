@@ -60,7 +60,7 @@ export const FormulaSidebar: FC<{state: State}> = ({state}) => {
                     paddingLeft: theme.spacing.s1,
                     paddingRight: theme.spacing.s1,
                 }}>
-                <Stack horizontal gap={theme.spacing.s1}>
+                <Stack horizontal tokens={{childrenGap: theme.spacing.s1}}>
                     <StackItem grow={2}>
                         <PrimaryButton
                             style={{width: "100%"}}

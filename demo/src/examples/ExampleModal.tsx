@@ -63,7 +63,7 @@ export const ExampleModal: FC<{onLoad: (model: IModelData) => void}> = ({onLoad}
                     <StackItem>
                         <Stack
                             horizontal
-                            gap={10}
+                            tokens={{childrenGap: 10}}
                             style={{padding: theme.spacing.m}}
                             horizontalAlign="end">
                             <StackItem>

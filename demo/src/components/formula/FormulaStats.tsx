@@ -41,23 +41,30 @@ export const FormulaStats: FC<{formula: Formula}> = ({formula}) => {
     const [h] = useDataHook();
     const depth = formula.getDepth(h);
     const alternationDepth = formula.getAlternationDepth(h);
+    const dependentAlternationDepth = formula.getDependentAlternationDepth(h);
     const alternationErrors = formula.getOddNegations(h);
 
     return (
         <>
-            <Stack
-                horizontal
-                tokens={{childrenGap: theme.spacing.m}}
-                style={{marginBottom: theme.spacing.m}}>
+            <Stack horizontal tokens={{childrenGap: theme.spacing.m}}>
                 <StackItem grow={1}>
                     <Label>Fixpoint depth</Label>
-                    {depth}
                 </StackItem>
+                <StackItem style={{minWidth: 20}}>{depth}</StackItem>
+            </Stack>
+            <Stack horizontal tokens={{childrenGap: theme.spacing.m}}>
                 <StackItem grow={1}>
                     <Label>Fixpoint alternation depth</Label>
-                    {alternationDepth}
                 </StackItem>
+                <StackItem style={{minWidth: 20}}>{alternationDepth}</StackItem>
             </Stack>
+            <Stack horizontal tokens={{childrenGap: theme.spacing.m}}>
+                <StackItem grow={1}>
+                    <Label>Fixpoint dependent alternation depth</Label>
+                </StackItem>
+                <StackItem style={{minWidth: 20}}>{dependentAlternationDepth}</StackItem>
+            </Stack>
+
             <Label>Simplified formula</Label>
             <div
                 style={{

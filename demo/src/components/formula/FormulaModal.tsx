@@ -95,7 +95,7 @@ export const FormulaModal: FC<{
 
     return (
         <StandardModal title="Edit formula" visible={visible} onClose={onClose}>
-            <Stack horizontal gap={theme.spacing.m}>
+            <Stack horizontal tokens={{childrenGap: theme.spacing.m}}>
                 <StackItem grow={1} style={{minWidth: 150}}>
                     <TextField
                         underlined
