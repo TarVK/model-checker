@@ -46,7 +46,7 @@ export const FormulaSidebar: FC<{state: State}> = ({state}) => {
     return (
         <Stack
             style={{
-                minWidth: 400,
+                width: 400,
                 height: "100%",
                 background: theme.palette.white,
                 paddingTop: theme.spacing.s1,

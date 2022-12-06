@@ -45,14 +45,18 @@ export const FormulaControls: FC<{
 
             <Stack
                 horizontal
+                verticalAlign="center"
                 styles={{
-                    root: {lineHeight: 32, paddingLeft: theme.spacing.s1},
+                    root: {paddingLeft: theme.spacing.s1},
                 }}>
-                <StackItem grow={1}>{formula.getName(h)}</StackItem>
+                <StackItem grow={1} style={{paddingRight: theme.spacing.m}}>
+                    {formula.getName(h)}
+                </StackItem>
                 <StackItem style={{paddingRight: theme.spacing.s1}}>
                     {verified ? (
                         <Fragment>
-                            Verified in {time.value} {time.unit}
+                            Verified in {time.value} {time.unit} using{" "}
+                            {verified.fixpointIterations} iterations
                         </Fragment>
                     ) : null}
                 </StackItem>

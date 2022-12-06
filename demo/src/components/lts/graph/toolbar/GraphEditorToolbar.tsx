@@ -73,7 +73,10 @@ export const GraphEditorToolbar: FC<{
                 icon="GitGraph"
                 hover="Auto format layout"
                 title="Auto layout"
-                onClick={() => state.LTSState.layout()}
+                onClick={async () => {
+                    await state.LTSState.layout();
+                    state.autoPosition();
+                }}
             />
 
             {/* Extra settings */}

@@ -23,7 +23,7 @@ export class Formula {
     protected text = new Field("");
     protected computationTime = new Field(0);
 
-    protected algoritm = new Field<IVerifyAlgoritm>("naive");
+    protected algoritm = new Field<IVerifyAlgoritm>("EmersonLei");
 
     protected parsed = new DataCacher(hook => formulaParser.parse(this.text.get(hook)));
     protected ast = new DataCacher(hook => {

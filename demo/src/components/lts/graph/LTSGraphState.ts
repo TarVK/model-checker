@@ -2,6 +2,7 @@ import {Field, IDataHook} from "model-react";
 import {string} from "parsimmon";
 import {State} from "../../../model/State";
 import {IPoint} from "../../../_types/IPoint";
+import {radius} from "./drawing/Node";
 import {getDistance} from "./util/getDistance";
 import {Opt, VBool, VEnum, VNumber, VObject, VString} from "./util/verifiers";
 import {IErrorData} from "./util/_types/IVerifier";
@@ -20,6 +21,7 @@ export class LTSGraphState {
         scale: 1,
     });
 
+    protected boundingBox = new Field<IPoint>({x: 0, y: 0});
     protected config = new Field<IGraphEditorConfig>({
         grid: "none",
         showAxis: false,
@@ -147,6 +149,53 @@ export class LTSGraphState {
                 y: offset.y - delta.y,
             },
             scale: newScale,
+        });
+    }
+
+    /**
+     * Sets the available area
+     * @param area The hook to subscribe to changes
+     */
+    public setArea(area: IPoint): void {
+        this.boundingBox.set(area);
+    }
+
+    /**
+     * Retrieves the area of the drawing space
+     * @param hook The hook to subscribe to changes
+     * @returns The available area
+     */
+    public getArea(hook?: IDataHook): IPoint {
+        return this.boundingBox.get(hook);
+    }
+
+    /**
+     * Automatically sets the scale and position to fit the current drawing
+     */
+    public autoPosition(): void {
+        const {minX, maxX, minY, maxY} = this.LTSState.getBoundingBox();
+        const center = {
+            x: (maxX + minX) / 2,
+            y: (maxY + minY) / 2,
+        };
+        const padding = 2 * radius + radius; // 2*radius to fit everything, + radius as random margin
+        const size = {
+            width: maxX - minX + padding,
+            height: maxY - minY + padding,
+        };
+        if (size.width == 0 || size.width == 0) return;
+        const availableSize = this.boundingBox.get();
+
+        const scale = Math.min(
+            availableSize.x / size.width,
+            availableSize.y / size.height
+        );
+        this.setTransformation({
+            scale,
+            offset: {
+                x: -center.x * scale,
+                y: -center.y * scale,
+            },
         });
     }
 

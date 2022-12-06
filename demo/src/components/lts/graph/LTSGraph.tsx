@@ -1,4 +1,4 @@
-import {useDataHook} from "model-react";
+import {Field, useDataHook} from "model-react";
 import React, {FC, useCallback, useEffect, useRef, useState} from "react";
 import {State} from "../../../model/State";
 import {getDistance} from "./util/getDistance";
@@ -13,14 +13,18 @@ import {mergeStyles, TextField} from "@fluentui/react";
 import {useLazyRef} from "../../../util/useLazyRef";
 import {IPoint} from "../../../_types/IPoint";
 import {StandardModal} from "../../Modal";
+import {Arc} from "./drawing/Arc";
 
-export const LTSGraph: FC<{state: State}> = ({state}) => {
+export const LTSGraph: FC<{editorState: LTSGraphState}> = ({editorState}) => {
     const [h] = useDataHook();
-    const editorState = useLazyRef(() => new LTSGraphState(state)).current;
+    const {LTSState: state} = editorState;
 
     const dragging = useRef(false);
 
-    const arcStartNode = useRef<null | number>(null);
+    const arcStartNodeRef = useRef<null | number>(null);
+    const [arcStartNode, setArcStartNode] = useState<null | number>(null);
+    const [arcEndNode, setArcEndNode] = useState<null | number>(null);
+    const mousePos = useRef(new Field<IPoint>({x: 0, y: 0}));
     const [arcText, setArcText] = useState("");
 
     const editingArc = editorState.getEditingArc(h);
@@ -60,7 +64,8 @@ export const LTSGraph: FC<{state: State}> = ({state}) => {
                 state.addState(snappedPoint);
             } else if (tool == "connect") {
                 const s = getNode(point);
-                arcStartNode.current = s;
+                arcStartNodeRef.current = s;
+                setArcStartNode(s);
             }
 
             evt.preventDefault();
@@ -77,9 +82,17 @@ export const LTSGraph: FC<{state: State}> = ({state}) => {
             if (tool == "connect") {
                 const to = getNode(point);
 
-                const from = arcStartNode.current;
-                if (from == null || to == null) return;
+                const from = arcStartNodeRef.current;
+                if (from == null || to == null) {
+                    setArcEndNode(null);
+                    setArcStartNode(null);
+                    return;
+                }
                 editorState.setEditingArc({to, from, action: null});
+                setArcEndNode(to);
+            } else {
+                setArcEndNode(null);
+                setArcStartNode(null);
             }
         },
         [state]
@@ -87,6 +100,7 @@ export const LTSGraph: FC<{state: State}> = ({state}) => {
 
     const onMouseMove = useCallback<IInteractionHandler>(
         (evt, point, delta) => {
+            mousePos.current.set(point);
             if (dragging.current) {
                 const selection = editorState.getSelection();
                 if (selection?.type == "node") {
@@ -132,7 +146,10 @@ export const LTSGraph: FC<{state: State}> = ({state}) => {
             if (arcText) state.addTransition(editingArc.from, editingArc.to, arcText);
         }
         editorState.setEditingArc(null);
+        setArcStartNode(null);
+        setArcEndNode(null);
     };
+
     return (
         <div
             className={style}
@@ -153,7 +170,16 @@ export const LTSGraph: FC<{state: State}> = ({state}) => {
                     onMouseUp={onMouseUp}
                     onKeyDown={onKeyDown}
                     onMouseLeave={onMouseLeave}>
-                    <Shapes state={editorState} />
+                    <Shapes state={editorState}>
+                        {arcStartNode != null && (
+                            <Arc
+                                editorState={editorState}
+                                from={arcStartNode}
+                                to={arcEndNode ? arcEndNode : mousePos.current}
+                                toDelta={arcEndNode ? undefined : 0}
+                            />
+                        )}
+                    </Shapes>
                 </EditorPlane>
             </div>
 

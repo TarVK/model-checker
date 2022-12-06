@@ -7,11 +7,13 @@ import {ArcLabel} from "./ArcLabel";
 import {getTransitions} from "../util/getTransitions";
 import {LTSGraphState} from "../LTSGraphState";
 import {Node} from "./Node";
+import {getTheme} from "@fluentui/react";
 
-export const Shapes: FC<{state: LTSGraphState}> = ({state}) => {
+export const Shapes: FC<{state: LTSGraphState}> = ({state, children}) => {
     const [h] = useDataHook();
     const [size, setSize] = useState<IPoint>({x: 0, y: 0});
     const containerRef = useRef<SVGElement>();
+    const theme = getTheme();
 
     const setContainer = useCallback((container: SVGElement | null) => {
         if (container) {
@@ -58,7 +60,18 @@ export const Shapes: FC<{state: LTSGraphState}> = ({state}) => {
                     refY={2}>
                     <path d="M0,0 V4 L2,2 Z" fill="black" />
                 </marker>
+                <marker
+                    id="headSelected"
+                    orient="auto"
+                    markerWidth={5}
+                    markerHeight={6}
+                    refX={1}
+                    refY={2}>
+                    <path d="M0,0 V4 L2,2 Z" fill={theme.palette.themePrimary} />
+                </marker>
             </defs>
+
+            {children}
 
             {transitions.map(({to, from, actions}) => (
                 <Arc key={`${from}-${to}`} editorState={state} from={from} to={to} />

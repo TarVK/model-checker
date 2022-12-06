@@ -21,7 +21,7 @@ export const EditorPlane: FC<IEditorPlaneProps> = ({
     onMouseLeave,
 }) => {
     const [h] = useDataHook();
-    const [size, setSize] = useState<{x: number; y: number}>({x: 0, y: 0});
+    // const [size, setSize] = useState<{x: number; y: number}>({x: 0, y: 0});
     const containerRef = useRef<HTMLDivElement>();
 
     const getWorldPoint = useCallback((point: IPoint, el: HTMLDivElement) => {
@@ -65,7 +65,7 @@ export const EditorPlane: FC<IEditorPlaneProps> = ({
     const setContainer = useCallback((container: HTMLDivElement | null) => {
         if (container) {
             const rect = container.getBoundingClientRect();
-            setSize({x: rect.width, y: rect.height});
+            state.setArea({x: rect.width, y: rect.height});
             containerRef.current = container;
         }
     }, []);
@@ -77,11 +77,11 @@ export const EditorPlane: FC<IEditorPlaneProps> = ({
         if (!container) return;
         const update = () => {
             const rect = container.getBoundingClientRect();
-            setSize({x: rect.width, y: rect.height});
+            state.setArea({x: rect.width, y: rect.height});
         };
         update();
         setTimeout(update); // Requires rerender first
-    }, [windowSize, editorShown]);
+    }, [state, windowSize, editorShown]);
 
     const onMouseDrag = useCallback(
         (evt: React.MouseEvent<HTMLDivElement>) => {
@@ -172,6 +172,7 @@ export const EditorPlane: FC<IEditorPlaneProps> = ({
     const {offset, scale} = state.getTransformation(h);
     const gridSize = state.getGridSize(h);
     const {showAxis, grid} = state.getConfig(h);
+    const size = state.getArea(h);
     return (
         <div
             className="plane"

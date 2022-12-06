@@ -12,6 +12,7 @@ import {IEmersonLeiFormulaAST} from "./_types/IEmersonLeiFormulaAST";
  */
 export function emersonLeiVerify(lts: ILTS, formula: IFormulaAST): IVerifyResult {
     const vars = new Map<string, Set<number>>();
+    let fixpointIterations = 0;
 
     // Initializes all variables at least once
     function initializeVariables(f: IEmersonLeiFormulaAST) {
@@ -62,6 +63,7 @@ export function emersonLeiVerify(lts: ILTS, formula: IFormulaAST): IVerifyResult
         let oldSet = vars.get(variable)!;
 
         while (true) {
+            fixpointIterations++;
             const newSet = evalF(formula, parentBinder);
             const reachedFixPoint = equals(newSet, oldSet);
             if (reachedFixPoint) return newSet;
@@ -101,7 +103,7 @@ export function emersonLeiVerify(lts: ILTS, formula: IFormulaAST): IVerifyResult
             );
         else if (f.type == "greatestFixpoint")
             return computeFixpoint(
-                new Set(),
+                lts.states,
                 parentBinder == "least" ? f.openGreatestFixpoints : null,
                 f.variable,
                 f.formula,
@@ -110,7 +112,7 @@ export function emersonLeiVerify(lts: ILTS, formula: IFormulaAST): IVerifyResult
         else {
             //: if(f.type=="leastFixpoint")
             return computeFixpoint(
-                lts.states,
+                new Set(),
                 parentBinder == "greatest" ? f.openLeastFixpoints : null,
                 f.variable,
                 f.formula,
@@ -126,5 +128,6 @@ export function emersonLeiVerify(lts: ILTS, formula: IFormulaAST): IVerifyResult
     return {
         satisfyingStates: states,
         verified: states.has(lts.init),
+        fixpointIterations,
     };
 }

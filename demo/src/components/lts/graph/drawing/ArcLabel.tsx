@@ -2,14 +2,15 @@ import {getTheme} from "@fluentui/react";
 import {useDataHook} from "model-react";
 import React, {FC} from "react";
 import {LTSGraphState} from "../LTSGraphState";
+import {radius} from "./Node";
 
-const theme = getTheme();
 export const ArcLabel: FC<{
     editorState: LTSGraphState;
     from: number;
     to: number;
     actions: string[];
 }> = ({editorState, from, to, actions}) => {
+    const theme = getTheme();
     const [h] = useDataHook();
     const {LTSState} = editorState;
 
@@ -25,6 +26,11 @@ export const ArcLabel: FC<{
         x: fromPos.x * (1 - f) + toPos.x * f,
         y: fromPos.y * (1 - f) + toPos.y * f,
     };
+
+    if (fromPos.x == toPos.x && fromPos.y == toPos.y) {
+        center.x = fromPos.x + radius * 1.8;
+        center.y = fromPos.y - radius * 1.8;
+    }
 
     const fontSize = 15;
     return (

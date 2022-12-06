@@ -10,6 +10,7 @@ import {equals, intersect, union} from "./setUtils";
  */
 export function naiveVerify(lts: ILTS, formula: IFormulaAST): IVerifyResult {
     const vars = new Map<string, Set<number>>();
+    let fixpointIterations = 0;
 
     // Gets all states based on a formula and the action that should lead to states satisfying the formula
     function checkNext(
@@ -35,6 +36,7 @@ export function naiveVerify(lts: ILTS, formula: IFormulaAST): IVerifyResult {
         let oldSet = init;
         vars.set(variable, oldSet);
         while (true) {
+            fixpointIterations++;
             const newSet = evalF(formula);
             const reachedFixPoint = equals(newSet, oldSet);
             if (reachedFixPoint) return newSet;
@@ -60,10 +62,10 @@ export function naiveVerify(lts: ILTS, formula: IFormulaAST): IVerifyResult {
                 toTransitions.every(x => satisfyingFormuula.has(x))
             );
         else if (f.type == "greatestFixpoint")
-            return computeFixpoint(new Set(), f.variable, f.formula);
+            return computeFixpoint(lts.states, f.variable, f.formula);
         else {
             //: if(f.type=="leastFixpoint")
-            return computeFixpoint(lts.states, f.variable, f.formula);
+            return computeFixpoint(new Set(), f.variable, f.formula);
         }
     }
 
@@ -72,5 +74,6 @@ export function naiveVerify(lts: ILTS, formula: IFormulaAST): IVerifyResult {
     return {
         satisfyingStates: states,
         verified: states.has(lts.init),
+        fixpointIterations,
     };
 }

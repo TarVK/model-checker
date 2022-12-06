@@ -9,14 +9,16 @@ import {useLazyRef} from "./util/useLazyRef";
 import {State} from "./model/State";
 import {FormulaSidebar} from "./components/formula/FormulaSidebar";
 import {LTSGraph} from "./components/lts/graph/LTSGraph";
+import {LTSGraphState} from "./components/lts/graph/LTSGraphState";
 
 const theme = getTheme();
 export const App: FC = () => {
-    const state = useLazyRef(() => {
+    const editorState = useLazyRef(() => {
         const state = new State();
         state.setLTS("des(0,0,0)");
-        return state;
+        return new LTSGraphState(state);
     }).current;
+    const {LTSState: state} = editorState;
 
     return (
         <div>
@@ -31,21 +33,25 @@ export const App: FC = () => {
                 <StackItem>
                     <Header>
                         <ExampleModal
-                            onLoad={({modelText, formulas, statePoses}) => {
+                            onLoad={async ({modelText, formulas, statePoses}) => {
                                 state.setLTS(modelText);
                                 state.clearPoses();
                                 state
                                     .getFormulas()
                                     .forEach(formula => state.removeFormula(formula));
-                                [...formulas].reverse().forEach(({name, text}) => {
-                                    const formula = state.addFormula();
-                                    formula.setName(name);
-                                    formula.setFormula(text);
-                                });
+                                [...formulas]
+                                    .reverse()
+                                    .forEach(({name, text, algorithm}) => {
+                                        const formula = state.addFormula();
+                                        formula.setName(name);
+                                        formula.setFormula(text);
+                                        if (algorithm) formula.setAlgoritm(algorithm);
+                                    });
                                 Object.entries(statePoses).forEach(([s, pos]) =>
                                     state.setStatePos(Number(s), pos)
                                 );
-                                state.layout();
+                                await state.layout();
+                                editorState.autoPosition();
                             }}
                         />
                     </Header>
@@ -57,7 +63,7 @@ export const App: FC = () => {
                             grow={1}
                             shrink={1}
                             styles={{root: {flexBasis: 0, minWidth: 0}}}>
-                            <LTSGraph state={state} />
+                            <LTSGraph editorState={editorState} />
                         </StackItem>
                         <StackItem
                             style={{

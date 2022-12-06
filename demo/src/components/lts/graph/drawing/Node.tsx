@@ -5,12 +5,12 @@ import {failsColor, satisfiesColor} from "../../../../colors";
 import {State} from "../../../../model/State";
 import {LTSGraphState} from "../LTSGraphState";
 
-const theme = getTheme();
 export const radius = 14;
 export const Node: FC<{editorState: LTSGraphState; node: number}> = ({
     editorState,
     node,
 }) => {
+    const theme = getTheme();
     const [h] = useDataHook();
     const {LTSState} = editorState;
     const pos = LTSState.getStatePos(node, h);
@@ -22,6 +22,8 @@ export const Node: FC<{editorState: LTSGraphState; node: number}> = ({
     const satisfies = shownFormula?.getResult(h)?.satisfyingStates.has(node);
     const notSatisfies = shownFormula?.getResult(h) && !satisfies;
 
+    const isMainNode = LTSState.getLTS()?.init == node;
+
     return (
         <g id={`${node}`}>
             <circle
@@ -32,7 +34,7 @@ export const Node: FC<{editorState: LTSGraphState; node: number}> = ({
                         ? failsColor
                         : "white",
                     stroke: selected ? theme.palette.themePrimary : "#000",
-                    strokeWidth: 1,
+                    strokeWidth: isMainNode ? 3 : 1,
                     strokeMiterlimit: 40,
                     cursor:
                         editorState.getSelectedTool(h) != "add" ? "pointer" : "default",

@@ -12,9 +12,10 @@ import React, {FC, useRef, useState} from "react";
 import {IModelData} from "../_types/IModelData";
 import {binaryAddition} from "./types/binaryAddition";
 import {combined} from "./types/combined";
+import {fixpointTest} from "./types/fixpointTest";
 import {pigeonHole} from "./types/pigeonHole";
 
-const examples = [combined];
+const examples = [combined, fixpointTest];
 const theme = getTheme();
 export const ExampleModal: FC<{onLoad: (model: IModelData) => void}> = ({onLoad}) => {
     const [visible, setVisible] = useState(false);

@@ -2,6 +2,7 @@ import {createLTS, ILSTAST, ILTS, ltsParser, stringifyLTS} from "model-checker";
 import {DataCacher, Field, IDataHook} from "model-react";
 import {drawGraph} from "../components/lts/graph/layout/drawGraph";
 import {formatSyntaxError} from "../util/formatyntaxError";
+import {IBoundingBox} from "../_types/IBoundingBox";
 import {IPoint} from "../_types/IPoint";
 import {ISyntaxError} from "../_types/ISyntaxError";
 import {Formula} from "./Formula";
@@ -196,6 +197,31 @@ export class State {
         Object.entries(positions).forEach(([key, pos]) =>
             this.setStatePos(Number(key), pos)
         );
+    }
+
+    protected boundingBox = new DataCacher<IBoundingBox>(hook => {
+        const boundingBox = {
+            minX: Infinity,
+            maxX: -Infinity,
+            minY: Infinity,
+            maxY: -Infinity,
+        };
+        for (let pos of Object.values(this.LTSPoses.get(hook))) {
+            const {x, y} = pos.get(hook);
+            if (x < boundingBox.minX) boundingBox.minX = x;
+            if (x > boundingBox.maxX) boundingBox.maxX = x;
+            if (y < boundingBox.minY) boundingBox.minY = y;
+            if (y > boundingBox.maxY) boundingBox.maxY = y;
+        }
+        return boundingBox;
+    });
+    /**
+     * Retrieves the bounding box of the current drawing (for 0 sized nodes)
+     * @param hook The hook to subscribe to changes
+     * @returns The bounding box that contains the drawing
+     */
+    public getBoundingBox(hook?: IDataHook): IBoundingBox {
+        return this.boundingBox.get(hook);
     }
 
     // Formula handling

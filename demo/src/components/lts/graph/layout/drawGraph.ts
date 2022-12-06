@@ -15,11 +15,15 @@ const s = <T>(v: T) => v + "";
 export async function drawGraph(lts: ILTS): Promise<Record<number, IPoint>> {
     const graph: ElkNode = {
         id: "root",
+        // layoutOptions: {
+        //     "elk.algorithm": "force",
+        //     "elk.force.iterations": "500",
+        //     "elk.spacing.nodeNode": "160",
+        //     "elk.layered.priority.straightness": "100",
+        //     "or.eclipse.elk.force.repulsivePower": "10",
+        // },
         layoutOptions: {
-            "elk.algorithm": "force",
-            "elk.force.iterations": "500",
-            "elk.spacing.nodeNode": "160",
-            "elk.layered.priority.straightness": "100",
+            "elk.algorithm": "stress",
         },
         children: [...lts.states].map(state => ({
             id: s(state),
