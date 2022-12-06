@@ -16,9 +16,9 @@ import {br} from "../latex";
 const theme = getTheme();
 export const fixpointTest = {
     name: "Fixpoint",
-    Comp: ({getCode}: {getCode: MutableRefObject<() => IModelData>}) => {
+    Comp: ({getCode}: {getCode: MutableRefObject<() => Promise<IModelData>>}) => {
         getCode.current = useCallback(
-            () => ({
+            async () => ({
                 modelText: `des(0, 20, 21)
                 (0, "a", 6)
                 (6, "a", 5)
@@ -45,15 +45,15 @@ export const fixpointTest = {
                 formulas: [
                     {
                         name: "a 'b' cycle can be reached using 'a's",
-                        text: "mu X. (<a>X || nu Y. <b>Y)",
+                        formula: "mu X. (<a>X || nu Y. <b>Y)",
                     },
                     {
                         name: "a 'b' cycle can be reached using 'c's followed by 'a's",
-                        text: "mu Z. (<c>Z || mu X. (<a>X || nu Y. <b>Y))",
+                        formula: "mu Z. (<c>Z || mu X. (<a>X || nu Y. <b>Y))",
                     },
                     {
                         name: "a 'b' cycle can be reached using 'c's followed by 'a's (naive)",
-                        text: "mu Z. (<c>Z || mu X. (<a>X || nu Y. <b>Y))",
+                        formula: "mu Z. (<c>Z || mu X. (<a>X || nu Y. <b>Y))",
                         algorithm: "naive",
                     },
                 ],

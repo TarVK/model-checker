@@ -135,10 +135,12 @@ export class State {
      * @param id The ID of the state to be removed
      */
     public removeState(id: number): void {
+        const poses = {...this.LTSPoses.get()};
+        delete poses[id];
+        this.LTSPoses.set(poses);
+
         const p = this.parsed.get();
         if (p.status) {
-            const poses = {...this.LTSPoses.get()};
-            delete poses[id];
             const val: ILSTAST = {
                 ...p.value,
                 stateCount: Object.keys(poses).length,
@@ -147,7 +149,6 @@ export class State {
                 ),
             };
             this.setLTS(stringifyLTS(val));
-            this.LTSPoses.set(poses);
         }
     }
 

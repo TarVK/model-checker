@@ -41,6 +41,7 @@ export class LTSGraphState {
     });
     protected selection = new Field<null | ISelection>(null);
     protected editingArc = new Field<null | IEditArc>(null);
+    protected simplifiedView = new Field<boolean>(false);
 
     protected tool = new Field<IToolSelection>("select");
 
@@ -244,6 +245,23 @@ export class LTSGraphState {
      */
     public setCodeEditorVisible(visible: boolean): void {
         this.showCodeEditor.set(visible);
+    }
+
+    /**
+     * Checks whether we should display the simplified view
+     * @param hook The hook to susbscribe to changes
+     * @returns Whether to display simplified view
+     */
+    public useSimplifiedView(hook?: IDataHook): boolean {
+        return this.simplifiedView.get(hook);
+    }
+
+    /**
+     * Enables or disables the simplified view
+     * @param simplified Whether to use the simplified view
+     */
+    public enableSimplifiedView(simplified: boolean): void {
+        this.simplifiedView.set(simplified);
     }
 
     /**

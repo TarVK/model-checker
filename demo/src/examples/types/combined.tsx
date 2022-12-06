@@ -16,9 +16,9 @@ import {br} from "../latex";
 const theme = getTheme();
 export const combined = {
     name: "Combined",
-    Comp: ({getCode}: {getCode: MutableRefObject<() => IModelData>}) => {
+    Comp: ({getCode}: {getCode: MutableRefObject<() => Promise<IModelData>>}) => {
         getCode.current = useCallback(
-            () => ({
+            async () => ({
                 modelText: `des (0,14,8)                                                 
 (0,"tau",1)
 (0,"tau",2)
@@ -38,18 +38,17 @@ export const combined = {
                 formulas: [
                     {
                         name: "test",
-                        text: "nu X. (<tau>X && mu Y. (<tau>Y || [a]false))",
+                        formula: "nu X. (<tau>X && mu Y. (<tau>Y || [a]false))",
                     },
                     {
                         name: "bool",
-                        text: "(false || true)",
+                        formula: "(false || true)",
                     },
                     {
                         name: "modal",
-                        text: "<b>true",
+                        formula: "<b>true",
                     },
                 ],
-                statePoses: {},
             }),
             []
         );

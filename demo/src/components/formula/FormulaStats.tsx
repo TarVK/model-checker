@@ -29,6 +29,7 @@ export const FormulaStats: FC<{formula: Formula}> = ({formula}) => {
             lineDecorationsWidth: 0,
             lineNumbersMinChars: 0,
             scrollBeyondLastLine: false,
+            wordWrap: "on",
         },
     });
 

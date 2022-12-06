@@ -79,15 +79,23 @@ export const GraphEditorToolbar: FC<{
                 }}
             />
 
-            {/* Extra settings */}
+            {/* Extra visual settings */}
             <div style={{flex: 1}} />
             <SidebarButton
                 icon="Code"
-                hover="Show json editor"
-                title="Show json editor"
+                hover="Show text editor"
+                title="Show text editor"
                 onClick={() => state.setCodeEditorVisible(!state.isCodeEditorVisible())}
                 selected={state.isCodeEditorVisible(h)}
             />
+            <SidebarButton
+                icon="Info"
+                hover="Show LTS info instead of graph"
+                title="Show info"
+                onClick={() => state.enableSimplifiedView(!state.useSimplifiedView())}
+                selected={state.useSimplifiedView(h)}
+            />
+            <div style={{width: 20}} />
             <SnapControls state={state} />
             <SidebarButton
                 icon={
@@ -116,7 +124,7 @@ export const GraphEditorToolbar: FC<{
                 onClick={() => updateConfig(cfg => ({...cfg, showAxis: !cfg.showAxis}))}
                 selected={cfg.showAxis}
             />
-            <EditorSettings state={state} />
+            {/* <EditorSettings state={state} /> */}
         </div>
     );
 };

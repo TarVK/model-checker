@@ -128,6 +128,15 @@ export const FormulaModal: FC<{
                     />
                 </StackItem>
             </Stack>
+
+            <TextField
+                placeholder="Description"
+                styles={{root: {marginTop: theme.spacing.s1}}}
+                multiline
+                autoAdjustHeight
+                value={formula.getDescription(h)}
+                onChange={(e, v) => v != null && formula.setDescription(v)}
+            />
             <Pivot aria-label="Formula tabs" style={{marginTop: theme.spacing.l1}}>
                 <PivotItem headerText="Formula">
                     <div

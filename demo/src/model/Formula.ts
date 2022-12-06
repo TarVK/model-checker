@@ -22,6 +22,7 @@ import {IVerifyAlgoritm} from "../_types/IVerifyAlgoritm";
 export class Formula {
     protected name = new Field("");
     protected text = new Field("");
+    protected descriptionText = new Field("");
     protected computationTime = new Field(0);
 
     protected algoritm = new Field<IVerifyAlgoritm>("EmersonLei");
@@ -103,6 +104,23 @@ export class Formula {
      */
     public getName(hook?: IDataHook): string {
         return this.name.get(hook);
+    }
+
+    /**
+     * Sets the description of this formula
+     * @param text The new description of the formula
+     */
+    public setDescription(text: string): void {
+        this.descriptionText.set(text);
+    }
+
+    /**
+     * Retrieves the description of this formula
+     * @param hook THe hoook to subscribe to changes
+     * @returns The current description of the formula
+     */
+    public getDescription(hook?: IDataHook): string {
+        return this.descriptionText.get(hook);
     }
 
     /**

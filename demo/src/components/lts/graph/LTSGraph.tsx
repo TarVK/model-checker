@@ -14,6 +14,7 @@ import {useLazyRef} from "../../../util/useLazyRef";
 import {IPoint} from "../../../_types/IPoint";
 import {StandardModal} from "../../Modal";
 import {Arc} from "./drawing/Arc";
+import {LTSInfo} from "./LTSInfo";
 
 export const LTSGraph: FC<{editorState: LTSGraphState}> = ({editorState}) => {
     const [h] = useDataHook();
@@ -149,6 +150,7 @@ export const LTSGraph: FC<{editorState: LTSGraphState}> = ({editorState}) => {
         setArcStartNode(null);
         setArcEndNode(null);
     };
+    const simplified = editorState.useSimplifiedView(h);
 
     return (
         <div
@@ -161,26 +163,30 @@ export const LTSGraph: FC<{editorState: LTSGraphState}> = ({editorState}) => {
             <GraphEditorToolbar state={editorState} />
             <div className="content">
                 <LTSCodeEditor state={editorState} />
-                <EditorPlane
-                    width={"auto"}
-                    height={"100%"}
-                    state={editorState}
-                    onMouseDown={onMouseDown}
-                    onMouseMove={onMouseMove}
-                    onMouseUp={onMouseUp}
-                    onKeyDown={onKeyDown}
-                    onMouseLeave={onMouseLeave}>
-                    <Shapes state={editorState}>
-                        {arcStartNode != null && (
-                            <Arc
-                                editorState={editorState}
-                                from={arcStartNode}
-                                to={arcEndNode ? arcEndNode : mousePos.current}
-                                toDelta={arcEndNode ? undefined : 0}
-                            />
-                        )}
-                    </Shapes>
-                </EditorPlane>
+                {!simplified ? (
+                    <EditorPlane
+                        width={"auto"}
+                        height={"100%"}
+                        state={editorState}
+                        onMouseDown={onMouseDown}
+                        onMouseMove={onMouseMove}
+                        onMouseUp={onMouseUp}
+                        onKeyDown={onKeyDown}
+                        onMouseLeave={onMouseLeave}>
+                        <Shapes state={editorState}>
+                            {arcStartNode != null && (
+                                <Arc
+                                    editorState={editorState}
+                                    from={arcStartNode}
+                                    to={arcEndNode ? arcEndNode : mousePos.current}
+                                    toDelta={arcEndNode ? undefined : 0}
+                                />
+                            )}
+                        </Shapes>
+                    </EditorPlane>
+                ) : (
+                    <LTSInfo state={state} />
+                )}
             </div>
 
             <StandardModal

@@ -4,13 +4,14 @@ import {IVerifyAlgoritm} from "./IVerifyAlgoritm";
 /** The serializable modal data that can be saved on disk */
 export type IModelData = {
     modelText: string;
-    statePoses: Record<number, IPoint>;
     formulas: IFormulaData[];
+    simplified?: boolean;
 };
 
 /** The serializable formula data that can be saved on disk */
 export type IFormulaData = {
     name: string;
-    text: string;
+    description?: string;
+    formula: string;
     algorithm?: IVerifyAlgoritm;
 };

@@ -7,21 +7,32 @@ import {
     PrimaryButton,
     Stack,
     StackItem,
+    Spinner,
+    SpinnerSize,
 } from "office-ui-fabric-react";
 import React, {FC, useRef, useState} from "react";
+import {useEffect} from "react";
 import {IModelData} from "../_types/IModelData";
+import {basic} from "./types/basic";
 import {binaryAddition} from "./types/binaryAddition";
 import {combined} from "./types/combined";
+import {diningPhilosophers} from "./types/diningPhilosophers";
 import {fixpointTest} from "./types/fixpointTest";
 import {pigeonHole} from "./types/pigeonHole";
 
-const examples = [combined, fixpointTest];
+const examples = [basic, diningPhilosophers, combined, fixpointTest];
 const theme = getTheme();
-export const ExampleModal: FC<{onLoad: (model: IModelData) => void}> = ({onLoad}) => {
+export const ExampleModal: FC<{onLoad: (model: IModelData) => Promise<void>}> = ({
+    onLoad,
+}) => {
     const [visible, setVisible] = useState(false);
+    const [loading, setLoading] = useState(false);
     const getCode = useRef(
-        (): IModelData => ({modelText: "", formulas: [], statePoses: {}})
+        async (): Promise<IModelData> => ({modelText: "", formulas: []})
     );
+    useEffect(() => {
+        if (visible) setLoading(false);
+    }, [visible]);
 
     return (
         <>
@@ -74,21 +85,19 @@ export const ExampleModal: FC<{onLoad: (model: IModelData) => void}> = ({onLoad}
                             </StackItem>
                             <StackItem>
                                 <PrimaryButton
-                                    onClick={() => {
+                                    onClick={async () => {
+                                        setLoading(true);
+                                        await onLoad(await getCode.current());
                                         setVisible(false);
-                                        onLoad(getCode.current());
                                     }}
-                                    text="Load"
-                                />
+                                    disabled={loading}>
+                                    {loading && <Spinner size={SpinnerSize.small} />}Load
+                                </PrimaryButton>
                             </StackItem>
                         </Stack>
                     </StackItem>
                 </Stack>
             </Modal>
-            <link
-                rel="stylesheet"
-                href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css"
-            />
         </>
     );
 };

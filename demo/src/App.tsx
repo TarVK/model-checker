@@ -10,6 +10,7 @@ import {State} from "./model/State";
 import {FormulaSidebar} from "./components/formula/FormulaSidebar";
 import {LTSGraph} from "./components/lts/graph/LTSGraph";
 import {LTSGraphState} from "./components/lts/graph/LTSGraphState";
+import {Info} from "./Info";
 
 const theme = getTheme();
 export const App: FC = () => {
@@ -22,6 +23,10 @@ export const App: FC = () => {
 
     return (
         <div>
+            <link
+                rel="stylesheet"
+                href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css"
+            />
             <Stack
                 styles={{
                     root: {
@@ -31,9 +36,16 @@ export const App: FC = () => {
                     },
                 }}>
                 <StackItem>
-                    <Header>
+                    <Header info={<Info />}>
                         <ExampleModal
-                            onLoad={async ({modelText, formulas, statePoses}) => {
+                            onLoad={async ({modelText, formulas, simplified = false}) => {
+                                if (simplified) {
+                                    editorState.enableSimplifiedView(true);
+                                    editorState.setCodeEditorVisible(false);
+                                }
+
+                                await new Promise(res => setTimeout(res, 100)); // Add time for a rerender of the simplified view
+
                                 state.setLTS(modelText);
                                 state.clearPoses();
                                 state
@@ -41,17 +53,26 @@ export const App: FC = () => {
                                     .forEach(formula => state.removeFormula(formula));
                                 [...formulas]
                                     .reverse()
-                                    .forEach(({name, text, algorithm}) => {
-                                        const formula = state.addFormula();
-                                        formula.setName(name);
-                                        formula.setFormula(text);
-                                        if (algorithm) formula.setAlgoritm(algorithm);
-                                    });
-                                Object.entries(statePoses).forEach(([s, pos]) =>
-                                    state.setStatePos(Number(s), pos)
-                                );
-                                await state.layout();
-                                editorState.autoPosition();
+                                    .forEach(
+                                        ({
+                                            name,
+                                            formula: text,
+                                            description,
+                                            algorithm,
+                                        }) => {
+                                            const formula = state.addFormula();
+                                            formula.setName(name);
+                                            formula.setFormula(text);
+                                            formula.setDescription(description ?? "");
+                                            if (algorithm) formula.setAlgoritm(algorithm);
+                                        }
+                                    );
+
+                                if (!simplified) {
+                                    await state.layout();
+                                    editorState.autoPosition();
+                                    editorState.enableSimplifiedView(false);
+                                }
                             }}
                         />
                     </Header>

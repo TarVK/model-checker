@@ -21,5 +21,6 @@ export function createLTS(ltsAst: ILSTAST): ILTS {
         init: ltsAst.firstState,
         states,
         transitions,
+        transitionCount: ltsAst.transitions.length,
     };
 }
