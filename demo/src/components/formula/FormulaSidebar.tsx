@@ -39,8 +39,8 @@ export const FormulaSidebar: FC<{state: State}> = ({state}) => {
         setJustCreated(state.addFormula());
     }, [state]);
 
-    const verifyAll = useCallback(() => {
-        state.getFormulas().forEach(formula => formula.verify());
+    const verifyAll = useCallback(async () => {
+        for (let formula of state.getFormulas()) await formula.verify();
     }, []);
 
     return (

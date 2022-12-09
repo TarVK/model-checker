@@ -8,7 +8,7 @@ import {ExampleModal} from "./examples/ExampleModal";
 import {useLazyRef} from "./util/useLazyRef";
 import {State} from "./model/State";
 import {FormulaSidebar} from "./components/formula/FormulaSidebar";
-import {LTSGraph} from "./components/lts/graph/LTSGraph";
+import {LTSComp} from "./components/lts/LTSComp";
 import {LTSGraphState} from "./components/lts/graph/LTSGraphState";
 import {Info} from "./Info";
 
@@ -84,7 +84,7 @@ export const App: FC = () => {
                             grow={1}
                             shrink={1}
                             styles={{root: {flexBasis: 0, minWidth: 0}}}>
-                            <LTSGraph editorState={editorState} />
+                            <LTSComp editorState={editorState} />
                         </StackItem>
                         <StackItem
                             style={{

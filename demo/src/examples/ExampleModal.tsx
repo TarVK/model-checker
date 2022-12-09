@@ -15,12 +15,23 @@ import {useEffect} from "react";
 import {IModelData} from "../_types/IModelData";
 import {basic} from "./types/basic";
 import {binaryAddition} from "./types/binaryAddition";
+import {cacheCoherence} from "./types/cacheCoherence";
 import {combined} from "./types/combined";
+import {demandingChildren} from "./types/demandingChildren"; // This one may have been omitted and has to be removed
 import {diningPhilosophers} from "./types/diningPhilosophers";
 import {fixpointTest} from "./types/fixpointTest";
+import {game} from "./types/game"; // This one may have been omitted and has to be removed
 import {pigeonHole} from "./types/pigeonHole";
 
-const examples = [basic, diningPhilosophers, combined, fixpointTest];
+const examples = [
+    basic,
+    diningPhilosophers,
+    demandingChildren,
+    cacheCoherence,
+    game,
+    combined,
+    fixpointTest,
+];
 const theme = getTheme();
 export const ExampleModal: FC<{onLoad: (model: IModelData) => Promise<void>}> = ({
     onLoad,

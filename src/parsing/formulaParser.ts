@@ -12,6 +12,7 @@ export const formulaParser: Parser<IExtendedFormulaAST> = p.lazy(() =>
         negationParser,
         conjunctionParser,
         disjunctionParser,
+        implicationParser,
         existsParser,
         forallParser,
         leastFixpointParser,
@@ -40,6 +41,14 @@ export const disjunctionParser = wrap(
         .seq(p.string("("), formulaParser, p.string("||"), formulaParser, p.string(")"))
         .map(([_1, left, _2, right, _3]) => ({type: "disjunction", left, right} as const))
 );
+export const implicationParser = wrap(
+    p
+        .seq(p.string("("), formulaParser, p.string("=>"), formulaParser, p.string(")"))
+        .map(
+            ([_1, premise, _2, conclusion, _3]) =>
+                ({type: "implies", premise, conclusion} as const)
+        )
+);
 export const existsParser = wrap(
     p
         .seq(p.string("<"), actionParser, p.string(">"), formulaParser)
@@ -52,7 +61,7 @@ export const forallParser = wrap(
 );
 export const leastFixpointParser = wrap(
     p
-        .seq(p.string("mu "), variableTextParser, p.string("."), formulaParser)
+        .seq(p.string("mu"), variableTextParser, p.string("."), formulaParser)
         .map(
             ([_1, variable, _2, formula]) =>
                 ({type: "leastFixpoint", variable, formula} as const)
@@ -60,7 +69,7 @@ export const leastFixpointParser = wrap(
 );
 export const greatestFixpointParser = wrap(
     p
-        .seq(p.string("nu "), variableTextParser, p.string("."), formulaParser)
+        .seq(p.string("nu"), variableTextParser, p.string("."), formulaParser)
         .map(
             ([_1, variable, _2, formula]) =>
                 ({type: "greatestFixpoint", variable, formula} as const)

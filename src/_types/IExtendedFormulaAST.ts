@@ -5,6 +5,7 @@ export type IExtendedFormulaAST =
     | IENegation
     | IEConjunction
     | IEDisjunction
+    | IEImplies
     | IEExistsPath
     | IEForallPaths
     | IELeastFixpoint
@@ -23,6 +24,11 @@ export type IEDisjunction = {
     type: "disjunction";
     left: IExtendedFormulaAST;
     right: IExtendedFormulaAST;
+};
+export type IEImplies = {
+    type: "implies";
+    premise: IExtendedFormulaAST;
+    conclusion: IExtendedFormulaAST;
 };
 export type IEExistsPath = {type: "exists"; action: string; formula: IExtendedFormulaAST};
 export type IEForallPaths = {

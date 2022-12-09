@@ -29,7 +29,7 @@ export const FormulaModal: FC<{
     visible: boolean;
     onClose: () => void;
 }> = ({formula, visible, onClose}) => {
-    const [h] = useDataHook();
+    const [h] = useDataHook({debounce: -1});
     const [editor, editorRef] = useEditor({
         value: formula.getFormulaText(),
         height: "100%",

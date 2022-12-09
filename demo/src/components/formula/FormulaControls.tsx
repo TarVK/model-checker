@@ -1,5 +1,13 @@
-import {getTheme, IconButton, Stack, StackItem, Text} from "@fluentui/react";
-import {useDataHook} from "model-react";
+import {
+    getTheme,
+    IconButton,
+    Spinner,
+    SpinnerSize,
+    Stack,
+    StackItem,
+    Text,
+} from "@fluentui/react";
+import {Loader, useDataHook} from "model-react";
 import React, {FC, Fragment, useEffect, useState} from "react";
 import {failsColor, satisfiesColor} from "../../colors";
 import {Formula} from "../../model/Formula";
@@ -61,22 +69,36 @@ export const FormulaControls: FC<{
                     ) : null}
                 </StackItem>
                 <StackItem>
-                    {verified ? (
-                        <SidebarButton
-                            icon="RedEye"
-                            hover="Show satisfying states"
-                            title="Show states"
-                            selected={selected}
-                            onClick={() => onSelect(formula)}
-                        />
-                    ) : formula.isValid(h) ? (
-                        <SidebarButton
-                            icon="Play"
-                            hover="Check formula on LTS"
-                            title="Check"
-                            onClick={() => formula.verify()}
-                        />
-                    ) : null}
+                    <Loader
+                        onLoad={
+                            <SidebarButton
+                                icon={<Spinner size={SpinnerSize.small} />}
+                                hover="Executing verification"
+                                title="Executing verification"
+                                selected={true}
+                                onClick={() => {}}
+                            />
+                        }>
+                        {h => {
+                            const verified = formula.getResult(h);
+                            return verified ? (
+                                <SidebarButton
+                                    icon="RedEye"
+                                    hover="Show satisfying states"
+                                    title="Show states"
+                                    selected={selected}
+                                    onClick={() => onSelect(formula)}
+                                />
+                            ) : formula.isValid(h) ? (
+                                <SidebarButton
+                                    icon="Play"
+                                    hover="Check formula on LTS"
+                                    title="Check"
+                                    onClick={() => formula.verify()}
+                                />
+                            ) : null;
+                        }}
+                    </Loader>
                 </StackItem>
                 <StackItem>
                     <SidebarButton

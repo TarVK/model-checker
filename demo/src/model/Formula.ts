@@ -1,4 +1,11 @@
-import {DataCacher, Field, IDataHook, IDataRetriever, Observer} from "model-react";
+import {
+    DataCacher,
+    Field,
+    IDataHook,
+    IDataRetriever,
+    Observer,
+    ExecutionState,
+} from "model-react";
 import {
     formulaParser,
     IFormulaAST,
@@ -66,6 +73,7 @@ export class Formula {
     });
 
     protected result = new Field<null | IVerifyResult>(null);
+    protected loadingResult = new ExecutionState();
 
     protected LTS: IDataRetriever<ILTS | null>;
     protected LTSObserver: Observer<ILTS | null>;
@@ -248,20 +256,22 @@ export class Formula {
      * Performs the formula verification and stores the result
      * @returns The result of the verification
      */
-    public verify(): IVerifyResult | undefined {
-        const formula = this.getSimplifiedFormula();
-        const lts = this.LTS();
-        if (formula && lts) {
-            const start = Date.now();
+    public async verify(): Promise<IVerifyResult | undefined> {
+        return this.loadingResult.add(async () => {
+            const formula = this.getSimplifiedFormula();
+            const lts = this.LTS();
+            if (formula && lts) {
+                const start = Date.now();
 
-            const result =
-                this.algoritm.get() == "EmersonLei"
-                    ? emersonLeiVerify(lts, formula)
-                    : naiveVerify(lts, formula);
-            this.result.set(result);
-            this.computationTime.set(Date.now() - start);
-            return result;
-        } else this.result.set(null);
+                const result =
+                    this.algoritm.get() == "EmersonLei"
+                        ? await emersonLeiVerify(lts, formula)
+                        : await naiveVerify(lts, formula);
+                this.result.set(result);
+                this.computationTime.set(Date.now() - start);
+                return result;
+            } else this.result.set(null);
+        });
     }
 
     /**
@@ -279,6 +289,7 @@ export class Formula {
      * @returns The current verification result
      */
     public getResult(hook?: IDataHook): IVerifyResult | null {
+        this.loadingResult.get(hook);
         return this.result.get(hook);
     }
 }

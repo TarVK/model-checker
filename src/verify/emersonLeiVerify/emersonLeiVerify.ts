@@ -8,11 +8,24 @@ import {IEmersonLeiFormulaAST} from "./_types/IEmersonLeiFormulaAST";
  * Verifies whether a given formula holds for a given LTS, using a slightly smarter algorithm for fixedpoints
  * @param lts The LTS in which to verify the formula
  * @param formula The formula to be satisfied
+ * @param asyncIntervalMS The delay in milliseconds after which to add an async interval, default to every 5 seconds
  * @returns The verification results
  */
-export function emersonLeiVerify(lts: ILTS, formula: IFormulaAST): IVerifyResult {
+export async function emersonLeiVerify(
+    lts: ILTS,
+    formula: IFormulaAST,
+    asyncIntervalMS: number = 1000
+): Promise<IVerifyResult> {
     const vars = new Map<string, Set<number>>();
     let fixpointIterations = 0;
+
+    // A function for pausing execution to allow parallel functionality to continue
+    let lastTime = Date.now();
+    async function pause() {
+        const now = Date.now();
+        if (lastTime + asyncIntervalMS > now)
+            await new Promise(res => setTimeout(res, 0));
+    }
 
     // Initializes all variables at least once
     function initializeVariables(f: IEmersonLeiFormulaAST) {
@@ -31,19 +44,18 @@ export function emersonLeiVerify(lts: ILTS, formula: IFormulaAST): IVerifyResult
     }
 
     // Gets all states based on a formula and the action that should lead to states satisfying the formula
-    function checkNext(
+    async function checkNext(
         action: string,
         formula: IEmersonLeiFormulaAST,
         test: (toTransitions: number[], toFormula: Set<number>) => boolean,
         parentBinder?: "least" | "greatest"
-    ): Set<number> {
+    ): Promise<Set<number>> {
         const out = new Set<number>();
-        const satisfyingStates = evalF(formula, parentBinder);
+        const satisfyingStates = await evalF(formula, parentBinder);
         const transitions = lts.transitions.get(action);
-        if (!transitions) return lts.states;
 
         for (let state of lts.states) {
-            const to = transitions.get(state) || [];
+            const to = transitions?.get(state) || [];
             if (test([...to], satisfyingStates)) out.add(state);
         }
 
@@ -51,7 +63,7 @@ export function emersonLeiVerify(lts: ILTS, formula: IFormulaAST): IVerifyResult
     }
 
     // Computes the fixpoint from an initial set
-    function computeFixpoint(
+    async function computeFixpoint(
         init: Set<number>,
         resetVars: Set<{variable: string}> | null,
         variable: string,
@@ -63,8 +75,9 @@ export function emersonLeiVerify(lts: ILTS, formula: IFormulaAST): IVerifyResult
         let oldSet = vars.get(variable)!;
 
         while (true) {
+            await pause();
             fixpointIterations++;
-            const newSet = evalF(formula, parentBinder);
+            const newSet = await evalF(formula, parentBinder);
             const reachedFixPoint = equals(newSet, oldSet);
             if (reachedFixPoint) return newSet;
 
@@ -74,17 +87,23 @@ export function emersonLeiVerify(lts: ILTS, formula: IFormulaAST): IVerifyResult
     }
 
     // Evaluates a given (sub) formula
-    function evalF(
+    async function evalF(
         f: IEmersonLeiFormulaAST,
         parentBinder?: "least" | "greatest"
-    ): Set<number> {
+    ): Promise<Set<number>> {
         if (f.type == "variable") return vars.get(f.name)!;
         else if (f.type == "true") return lts.states;
         else if (f.type == "false") return new Set();
         else if (f.type == "conjunction")
-            return intersect(evalF(f.left, parentBinder), evalF(f.right, parentBinder));
+            return intersect(
+                await evalF(f.left, parentBinder),
+                await evalF(f.right, parentBinder)
+            );
         else if (f.type == "disjunction")
-            return union(evalF(f.left, parentBinder), evalF(f.right, parentBinder));
+            return union(
+                await evalF(f.left, parentBinder),
+                await evalF(f.right, parentBinder)
+            );
         else if (f.type == "exists")
             return checkNext(
                 f.action,
@@ -123,7 +142,7 @@ export function emersonLeiVerify(lts: ILTS, formula: IFormulaAST): IVerifyResult
 
     const emersonLeiFormula = getEmersonLeiFormula(formula);
     initializeVariables(emersonLeiFormula);
-    const states = evalF(emersonLeiFormula);
+    const states = await evalF(emersonLeiFormula);
 
     return {
         satisfyingStates: states,

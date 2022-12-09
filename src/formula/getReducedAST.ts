@@ -37,6 +37,10 @@ const getInversionPushedDownAST = createExtendedReducer<{
         negated: {type: "conjunction", left: left.negated, right: right.negated},
         normal: {type: "disjunction", left: left.normal, right: right.normal},
     }),
+    implies: ({premise, conclusion}) => ({
+        negated: {type: "conjunction", left: premise.normal, right: conclusion.negated},
+        normal: {type: "disjunction", left: premise.negated, right: conclusion.normal},
+    }),
     exists: ({action, formula: {negated: inverted, normal}}) => ({
         negated: {type: "forall", action, formula: inverted},
         normal: {type: "exists", action, formula: normal},
@@ -73,6 +77,10 @@ const getInvertedVariables = createExtendedReducer<{
     disjunction: ({left, right}) => ({
         negated: union(left.negated, right.negated),
         normal: union(left.normal, right.normal),
+    }),
+    implies: ({premise, conclusion}) => ({
+        negated: union(premise.normal, conclusion.negated),
+        normal: union(premise.negated, conclusion.normal),
     }),
     exists: ({formula: {negated, normal}}) => ({negated, normal}),
     forall: ({formula: {negated, normal}}) => ({negated, normal}),

@@ -39,6 +39,12 @@ function createSharedReducer<O>(
                 left: rec(formula.left),
                 right: rec(formula.right),
             });
+        if (type == "implies")
+            return combine({
+                ...formula,
+                premise: rec(formula.premise),
+                conclusion: rec(formula.conclusion),
+            });
         if (
             type == "exists" ||
             type == "forall" ||
