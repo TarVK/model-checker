@@ -58,7 +58,7 @@ export const getFormulaWithUniqueVariablesData = createReducer<
  * @param taken The set of already taken variable names
  * @returns The available variable name
  */
-function getVariableName(taken: Set<string>): string {
+export function getVariableName(taken: Set<string>): string {
     const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     let i = 0;
     while (true) {

@@ -6,6 +6,8 @@ import {
     createActionSetReducer,
     createExtendedReducer,
 } from "./createReducer";
+import {getVariableName} from "./getFormulaWithUniqueVariables";
+import {getFreeVariables} from "./getFreeVariables";
 
 /**
  * Retrieves the reduced abstract syntax tree from an extended AST
@@ -29,15 +31,19 @@ const getExistsContext = (universe: Set<string>): IActionContext => ({
         parts.length == 0
             ? {type: "false"}
             : parts.reduce((left, right) => ({type: "disjunction", left, right})),
-    repeat: (repeat, next) => ({
-        type: "leastFixpoint",
-        variable: "X",
-        formula: {
-            type: "disjunction",
-            left: repeat({type: "variable", name: "X"}),
-            right: next,
-        },
-    }),
+    repeat: (repeat, next) => {
+        const freeVariables = getFreeVariables(next);
+        const varName = getVariableName(freeVariables);
+        return {
+            type: "leastFixpoint",
+            variable: varName,
+            formula: {
+                type: "disjunction",
+                left: repeat({type: "variable", name: varName}),
+                right: next,
+            },
+        };
+    },
     universe,
 });
 
@@ -47,15 +53,19 @@ const getForallContext = (universe: Set<string>): IActionContext => ({
         parts.length == 0
             ? {type: "true"}
             : parts.reduce((left, right) => ({type: "conjunction", left, right})),
-    repeat: (repeat, next) => ({
-        type: "greatestFixpoint",
-        variable: "X",
-        formula: {
-            type: "conjunction",
-            left: repeat({type: "variable", name: "X"}),
-            right: next,
-        },
-    }),
+    repeat: (repeat, next) => {
+        const freeVariables = getFreeVariables(next);
+        const varName = getVariableName(freeVariables);
+        return {
+            type: "greatestFixpoint",
+            variable: varName,
+            formula: {
+                type: "conjunction",
+                left: repeat({type: "variable", name: varName}),
+                right: next,
+            },
+        };
+    },
     universe,
 });
 

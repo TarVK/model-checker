@@ -98,6 +98,7 @@ export const FormulaModal: FC<{
             <Stack horizontal tokens={{childrenGap: theme.spacing.m}}>
                 <StackItem grow={1} style={{minWidth: 150}}>
                     <TextField
+                        autoFocus
                         underlined
                         value={formula.getName(h)}
                         onChange={(e, v) => v != null && formula.setName(v)}
