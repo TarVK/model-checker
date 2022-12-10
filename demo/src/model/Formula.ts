@@ -47,7 +47,6 @@ export class Formula {
         if (val && lts) {
             const reduced = getReducedAST(val, new Set(lts.transitions.keys()));
             if (reduced instanceof Set) return reduced;
-            console.log("detect");
             return getFormulaWithUniqueVariables(reduced);
         }
         return null;

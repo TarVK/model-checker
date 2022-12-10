@@ -1,5 +1,5 @@
 import {Range, editor as Editor} from "monaco-editor";
-import React, {FC, Suspense, useCallback, useEffect, useRef, useState} from "react";
+import React, {FC, useCallback, useEffect, useRef, useState} from "react";
 import {Stack, StackItem, getTheme, Dropdown, PrimaryButton} from "@fluentui/react";
 import {Header} from "./Header";
 import {combineOptions} from "./util/combineOptions";
@@ -20,6 +20,22 @@ export const App: FC = () => {
         return new LTSGraphState(state);
     }).current;
     const {LTSState: state} = editorState;
+
+    // Small hidden feature to aid with testing
+    useEffect(() => {
+        const listener = (event: KeyboardEvent) => {
+            if (event.key == "p")
+                state
+                    .getFormulas()
+                    .forEach(formula =>
+                        formula.setAlgoritm(
+                            formula.getAlgoritm() == "EmersonLei" ? "naive" : "EmersonLei"
+                        )
+                    );
+        };
+        window.addEventListener("keydown", listener);
+        return () => window.removeEventListener("keydown", listener);
+    }, [state]);
 
     return (
         <div>
