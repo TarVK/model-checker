@@ -25,7 +25,7 @@ export const Info: FC = () => (
             </Link>{" "}
             and are constructed with the following grammar: <br />
             <InlineTex
-                texContent={`$$f,g ::= false \\mid true \\mid X \\mid !f \\mid (f \\&\\& g) \\mid (f || g) \\mid [a]f \\mid \\text{<}a\\text{>} f \\mid mu \\; X.f \\mid nu \\; X.f$$
+                texContent={`$$f,g ::= false \\mid true \\mid X \\mid\\; !f \\mid f \\&\\& g \\mid f || g \\mid f\\text{=>}g \\mid [a]f \\mid \\text{<}a\\text{>} f \\mid mu \\; X.f \\mid nu \\; X.f \\mid (f)$$
                 `}
             />{" "}
             <br />
@@ -49,14 +49,19 @@ export const Info: FC = () => (
                     <Literal>f</Literal> does not hold for <Literal>s</Literal>
                 </li>
                 <li>
-                    <Literal>{`(f&&g)`}</Literal>: holds for <Literal>s</Literal> if{" "}
+                    <Literal>{`f&&g`}</Literal>: holds for <Literal>s</Literal> if{" "}
                     <Literal>f</Literal> holds for <Literal>s</Literal> and{" "}
                     <Literal>g</Literal> holds for <Literal>s</Literal>
                 </li>
                 <li>
-                    <Literal> {`(f||g)`}</Literal>: holds for <Literal>s</Literal> if{" "}
+                    <Literal> {`f||g`}</Literal>: holds for <Literal>s</Literal> if{" "}
                     <Literal>f</Literal> holds for <Literal>s</Literal> or{" "}
                     <Literal>g</Literal> holds for <Literal>s</Literal>
+                </li>
+                <li>
+                    <Literal> {`f=>g`}</Literal>: holds for <Literal>s</Literal> if when{" "}
+                    <Literal>f</Literal> holds for <Literal>s</Literal> or{" "}
+                    <Literal>g</Literal> also holds for <Literal>s</Literal>
                 </li>
                 <li>
                     <Literal> {`[a]f`}</Literal>: holds for <Literal>s</Literal> if{" "}
@@ -84,7 +89,16 @@ export const Info: FC = () => (
                 </li>
             </ul>
             A formula holds for a LTS, if it holds for the initial state of the LTS
-            (usually state 0).
+            (usually state 0). Note that instead of specifying a single action, a regular
+            expression may also be specified in accordance with{" "}
+            <a href="https://www.mcrl2.org/web/user_manual/articles/basic_modelling.html?highlight=formula#regular-hml">
+                regular HML syntax
+            </a>
+            . Many constructs - like these regular HML paths, negation, and implications -
+            are transformed out of the formula that the model checker eventually operates
+            on. They only serve as syntactic sugar to more easily write formulas. The
+            final formula that's verified by the model checker can be found in the "stats"
+            tab of the formula editor.
         </p>
         <p>
             The fixpoints (<Literal>mu</Literal> and <Literal>nu</Literal>) sound rather

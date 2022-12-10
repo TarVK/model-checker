@@ -17,6 +17,7 @@ import {
     getDepth,
     getFreeVariables,
     getDependentAlternationDepth,
+    getFormulaWithUniqueVariables,
 } from "model-checker";
 import {formatSyntaxError} from "../util/formatyntaxError";
 import {ISyntaxError} from "../_types/ISyntaxError";
@@ -42,7 +43,13 @@ export class Formula {
     });
     protected simplifiedAst = new DataCacher(hook => {
         const val = this.ast.get(hook);
-        if (val) return getReducedAST(val);
+        const lts = this.LTS(hook);
+        if (val && lts) {
+            const reduced = getReducedAST(val, new Set(lts.transitions.keys()));
+            if (reduced instanceof Set) return reduced;
+            console.log("detect");
+            return getFormulaWithUniqueVariables(reduced);
+        }
         return null;
     });
     protected errors = new DataCacher(hook => {

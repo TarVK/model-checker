@@ -1,6 +1,6 @@
 import p from "parsimmon";
 import {ILSTAST} from "../_types";
-import {wrap} from "./util";
+import {wrap} from "./wrap";
 
 const number = wrap(p.regex(/[0-9]+/))
     .map(val => Number(val))

@@ -19,6 +19,16 @@ export function union<T>(a: Set<T>, b: Set<T>): Set<T> {
 }
 
 /**
+ * Gets a copy of set a with items from b removed
+ * @param a The set to be copied
+ * @param b The items to be removed
+ * @returns The set a with b subtracted
+ */
+export function subtract<T>(a: Set<T>, b: Set<T>): Set<T> {
+    return new Set([...a].filter(v => !b.has(v)));
+}
+
+/**
  * Checks whether the two given sets are equivalent
  * @param a The first set to check
  * @param b The second set tocompare to

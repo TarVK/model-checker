@@ -7,3 +7,4 @@ export * from "./getDepth";
 export * from "./getFreeVariables";
 export * from "./getReducedAST";
 export * from "./getFormulaText";
+export * from "./getFormulaWithUniqueVariables";

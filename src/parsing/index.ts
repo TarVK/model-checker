@@ -1,3 +1,2 @@
-export * from "./formulaParser";
+export * from "./formula/formulaParser";
 export * from "./ltsParser";
-export * from "./util";
