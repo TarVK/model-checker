@@ -33,6 +33,7 @@ export const ArcLabel: FC<{
     }
 
     const fontSize = 15;
+    const tool = editorState.getSelectedTool(h);
     return (
         <text
             id={`${from}-${to}-label`}
@@ -58,6 +59,8 @@ export const ArcLabel: FC<{
                             arcSelected && selection.action == line
                                 ? theme.palette.themePrimary
                                 : "#000",
+
+                        cursor: tool == "select" ? "pointer" : "default",
                     }}
                     onClick={() => {
                         if (editorState.getSelectedTool() == "select") {

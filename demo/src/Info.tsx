@@ -18,7 +18,7 @@ export const Info: FC = () => (
             LTS in text (
             <Link href="https://www.mcrl2.org/web/user_manual/language_reference/lts.html#aldebaran-format">
                 aldebran format
-            </Link>{" "}
+            </Link>
             ) or visual form, and create multiple formulas. These formulas are based on{" "}
             <Link href="https://en.wikipedia.org/wiki/Modal_%CE%BC-calculus">
                 modal mu-calculus

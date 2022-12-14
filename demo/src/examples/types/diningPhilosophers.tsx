@@ -51,7 +51,7 @@ export const diningPhilosophers = {
                         name: "Plato infinitely often can eat",
                         description:
                             "There is a course of events in which Plato infinitely often eats",
-                        formula: "nu X. mu Y. ( (<plato>X || <i>Y) || <others>Y)",
+                        formula: "nu X. mu Y. ( (<plato>X || <i>Y) || <others>Y)", // nu X. <(!plato)*.plato>X
                     },
                 ],
                 simplified: count >= 4,

@@ -59,7 +59,7 @@ export const LTSCodeEditor: FC<{state: LTSGraphState}> = ({state}) => {
             styles={{
                 root: {
                     height: "100%",
-                    flex: shown ? 0.9 : 0,
+                    flex: shown ? 0.4 : 0,
                     width: shown ? "auto" : 0,
                     overflow: "hidden",
                 },

@@ -69,8 +69,8 @@ export const LTSComp: FC<{editorState: LTSGraphState}> = ({editorState}) => {
                 setArcStartNode(s);
             }
 
-            evt.preventDefault();
-            evt.stopPropagation();
+            // evt.preventDefault();
+            // evt.stopPropagation();
         },
         [state]
     );

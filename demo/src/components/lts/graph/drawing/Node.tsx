@@ -42,7 +42,16 @@ export const Node: FC<{editorState: LTSGraphState; node: number}> = ({
                 cx={pos.x}
                 cy={-pos.y}
                 r={radius}></circle>
-            <text x={pos.x} y={-pos.y} fontSize={15} textAnchor="middle" dy=".3em">
+            <text
+                style={{
+                    cursor:
+                        editorState.getSelectedTool(h) != "add" ? "pointer" : "default",
+                }}
+                x={pos.x}
+                y={-pos.y}
+                fontSize={15}
+                textAnchor="middle"
+                dy=".3em">
                 {node}
             </text>
         </g>
