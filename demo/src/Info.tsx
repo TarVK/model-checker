@@ -99,13 +99,13 @@ export const Info: FC = () => {
                 A formula holds for a LTS, if it holds for the initial state of the LTS
                 (usually state 0). Note that instead of specifying a single action, a
                 regular expression may also be specified in accordance with{" "}
-                <a href="https://www.mcrl2.org/web/user_manual/articles/basic_modelling.html?highlight=formula#regular-hml">
+                <Link href="https://www.mcrl2.org/web/user_manual/articles/basic_modelling.html?highlight=formula#regular-hml">
                     regular HML syntax
-                </a>
+                </Link>
                 . You can read more about{" "}
-                <a href="#" onClick={() => setShowActionFormula(true)}>
+                <Link href="#" onClick={() => setShowActionFormula(true)}>
                     action expressions here
-                </a>
+                </Link>
                 . Many constructs - like these regular HML paths, negation, and
                 implications - are transformed out of the formula that the model checker
                 eventually operates on. They only serve as syntactic sugar to more easily
