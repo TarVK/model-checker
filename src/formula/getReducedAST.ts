@@ -19,8 +19,8 @@ export function getReducedAST(
     formula: IExtendedFormulaAST,
     universe: Set<string>
 ): IFormulaAST | Set<string> {
-    const {normal: invalid, negated} = getInvertedVariables(formula);
-    if (invalid.size > 0) return invalid;
+    const invalidVariables = getInvertedVariables(formula)(false);
+    if (invalidVariables.size > 0) return invalidVariables;
 
     return getInversionPushedDownAST(formula)(universe)(false);
 }
@@ -120,40 +120,29 @@ const getInversionPushedDownAST = createExtendedReducer<
 /**
  * Retrieves all variables that are negated when pushed down fully
  */
-const getInvertedVariables = createExtendedReducer<{
-    negated: Set<string>;
-    normal: Set<string>;
-}>({
-    variable: ({name}) => ({negated: new Set([name]), normal: new Set()}),
-    true: () => ({negated: new Set(), normal: new Set()}),
-    false: () => ({negated: new Set(), normal: new Set()}),
-    negate: ({formula: {negated, normal}}) => ({negated: normal, normal: negated}),
-    conjunction: ({left, right}) => ({
-        negated: union(left.negated, right.negated),
-        normal: union(left.normal, right.normal),
-    }),
-    disjunction: ({left, right}) => ({
-        negated: union(left.negated, right.negated),
-        normal: union(left.normal, right.normal),
-    }),
-    implies: ({premise, conclusion}) => ({
-        negated: union(premise.normal, conclusion.negated),
-        normal: union(premise.negated, conclusion.normal),
-    }),
-    exists: ({formula: {negated, normal}}) => ({negated, normal}),
-    forall: ({formula: {negated, normal}}) => ({negated, normal}),
-    leastFixpoint: ({variable, formula: {negated, normal}}) => ({
-        negated: normal.has(variable)
-            ? add(negated, variable)
-            : remove(negated, variable),
-        normal: normal,
-    }),
-    greatestFixpoint: ({variable, formula: {negated, normal}}) => ({
-        negated: normal.has(variable)
-            ? add(negated, variable)
-            : remove(negated, variable),
-        normal: normal,
-    }),
+// prettier-ignore
+const getInvertedVariables = createExtendedReducer<(negated: boolean)=>Set<string>>({
+    variable: ({name}) => n => n ? new Set([name]) : new Set(),
+    true: () => n => new Set(),
+    false: () => n => new Set(),
+    negate: ({formula}) => n => formula(!n),
+    conjunction: ({left, right}) => n => union(left(n), right(n)),
+    disjunction: ({left, right}) => n => union(left(n), right(n)),
+    implies: ({premise, conclusion}) => n => union(premise(!n), conclusion(n)),
+    exists: ({formula}) => formula,
+    forall: ({formula}) => formula,
+    leastFixpoint: ({variable, formula}) => n => {
+        const normal = formula(false); 
+        if(!n) return normal;
+        const negated = formula(true); 
+        return normal.has(variable) ? add(negated, variable) : remove(negated, variable);
+    },
+    greatestFixpoint: ({variable, formula}) => n => {
+        const normal = formula(false); 
+        if(!n) return normal;
+        const negated = formula(true); 
+        return normal.has(variable) ? add(negated, variable) : remove(negated, variable);
+    },
 });
 
 /**

@@ -30,171 +30,27 @@ export const cacheCoherence = {
                     {
                         name: "Infinite run no access",
                         description: "",
-                        formula: `nu X. (
-    <i>X
-    ||
-        (          
-        <req_exclusive>X
-        ||
-        <req_shared>X
-        )
-    )
-`,
+                        formula: `nu X. <!(exclusive || shared)>X`,
                     },
                     {
                         name: "Infinitely often exclusive",
                         description: "",
-                        formula: `nu X. mu Y. ( <exclusive>X
-                    ||
-                    (
-                    <i>Y
-                    ||
-                        (                    
-                        <req_exclusive>Y
-                        ||
-                            (
-                            <req_shared>Y
-                            ||
-                            <shared>Y
-                            )
-                        )
-                    )
-                )
-`,
+                        formula: `nu X. <(!exclusive)*.exclusive>X`,
                     },
                     {
                         name: "invariantly eventually fair shared access",
                         description: "",
-                        formula: `nu X. (
-    [i]X
-    &&
-        (
-        [req_exclusive]X
-        &&
-            (
-            [exclusive]X
-            &&
-                (
-                    [shared]X
-                    &&
-                    [req_shared]nu Y. (
-                                        [i]Y
-                                        &&
-                                            (
-                                            [req_exclusive]Y
-                                            &&
-                                                (
-                                                [exclusive]Y
-                                                &&
-                                                    (
-                                                        [req_shared]Y
-                                                        &&
-                                                        mu Z. (
-                                                                <i>Z
-                                                                ||
-                                                                    (                    
-                                                                    <req_exclusive>Z
-                                                                    ||
-                                                                        (
-                                                                        <req_shared>Z
-                                                                        ||
-                                                                            (
-                                                                            <exclusive>Z
-                                                                            ||
-                                                                            <shared>true
-                                                                            )
-                                                                        )
-                                                                    )
-                                                                )
-                                                        )
-                                                    )
-                                                )
-                                            )
-                        )
-                    )
-                )
-            )
-                `,
+                        formula: `[(!req_shared)*.req_shared.(!shared)*]<(!shared)*.shared>true`,
                     },
                     {
                         name: "Invariantly inevitable exclusive access",
                         description: "",
-                        formula: `nu X. (
-    [i]X
-    &&
-        (
-        [req_exclusive]X
-        &&
-            (
-            [req_shared]X
-            &&
-                (
-                [exclusive]X
-                &&
-                    (
-                        [shared]X
-                        &&
-                        [req_exclusive]mu Y. (
-                                                [i]Y
-                                                &&
-                                                    (                    
-                                                    [req_exclusive]Y                    
-                                                    &&
-                                                        (
-                                                        [req_shared]Y
-                                                        &&
-                                                        [shared]Y
-                                                        )
-                                                    )                    
-                                                )
-                    )
-                )
-            )
-        )
-    )
-                `,
+                        formula: `[true*.req_exclusive]!nu Y. <!exclusive>Y`,
                     },
                     {
                         name: "Invariantly possibly exclusive access",
                         description: "",
-                        formula: `nu X. (
-    [i]X
-    &&
-        (
-        [req_exclusive]X
-        &&
-            (
-            [req_shared]X
-            &&
-                (
-                [exclusive]X
-                &&
-                    (
-                        [shared]X
-                        &&
-                        [req_exclusive]mu Y. (
-                                                <i>Y
-                                                ||
-                                                    (                    
-                                                    <req_exclusive>Y
-                                                    ||
-                                                        (
-                                                        <req_shared>Y
-                                                        ||
-                                                            (
-                                                            <shared>Y
-                                                            ||
-                                                            <exclusive>true
-                                                            )
-                                                        )
-                                                    )                    
-                                                )
-                    )
-                )
-            )
-        )
-    )
-                `,
+                        formula: `[true*.req_exclusive]<(!exclusive)*.exclusive>true`,
                     },
                 ],
                 simplified: true,
@@ -204,8 +60,13 @@ export const cacheCoherence = {
 
         return (
             <>
+                Cache coherence is the problem of dealing with caching in a setting where
+                multiple clients modify the same resource, and have layers of cache on top
+                of the resource. Data may accidentally (temporarily) be written to cache
+                only and not be available to the other clients. Steven German specified a
+                protocol that deals with this problem, which can be modelled using a LTS.
                 <p style={{clear: "both"}}>
-                    Note that this problem scales exponentially, so the 5 clients model is
+                    Note that these models contain many states, so the 5 clients model is
                     very large and will not run well at all!
                     <Dropdown
                         placeholder="Client count"

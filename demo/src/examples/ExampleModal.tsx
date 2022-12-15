@@ -15,12 +15,17 @@ import {useEffect} from "react";
 import {IModelData} from "../_types/IModelData";
 import {basic} from "./types/basic";
 import {cacheCoherence} from "./types/cacheCoherence";
-import {demandingChildren} from "./types/demandingChildren"; // This one may have been omitted and has to be removed
+// import {demandingChildren} from "./types/demandingChildren"; // This one may have been omitted and has to be removed
 import {diningPhilosophers} from "./types/diningPhilosophers";
-import {game} from "./types/game"; // This one may have been omitted and has to be removed
-import {pigeonHole} from "./types/pigeonHole";
+// import {game} from "./types/game"; // This one may have been omitted and has to be removed
 
-const examples = [basic, diningPhilosophers, demandingChildren, cacheCoherence, game];
+const examples = [
+    basic,
+    diningPhilosophers,
+    // demandingChildren,
+    cacheCoherence,
+    // game
+];
 const theme = getTheme();
 export const ExampleModal: FC<{onLoad: (model: IModelData) => Promise<void>}> = ({
     onLoad,
