@@ -69,7 +69,7 @@ Next we have to express what paths an expression `r` represents. We informally d
 -   `r + s`: includes `p` if `r` includes `p` or `s` includes `p`
 -   `r . s`: includes `p` if `r` includes a start sub-path of `p`, and `s` includes the remainder of the path of `p`
 -   `r*`: includes `p` if `p` can be split into _0_ or more sub-paths that each are included in `r`
--   `r*`: includes `p` if `p` can be split into _1_ or more sub-paths that each are included in `r`
+-   `r+`: includes `p` if `p` can be split into _1_ or more sub-paths that each are included in `r`
 
 Finally we have to express whether an action `ac` is present in a set of actions:
 
