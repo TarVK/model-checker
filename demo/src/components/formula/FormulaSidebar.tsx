@@ -20,6 +20,7 @@ export const FormulaSidebar: FC<{state: State}> = ({state}) => {
 
     const onDelete = useCallback(
         (formula: Formula) => {
+            setJustCreated(null);
             state.removeFormula(formula);
         },
         [state]
